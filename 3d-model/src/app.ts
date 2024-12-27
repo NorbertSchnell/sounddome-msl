@@ -85,7 +85,7 @@ for (let speaker of speakers) {
   // const camera: FreeCamera = new FreeCamera('camera', new Vector3(0, 0, 0), scene);
   camera.attachControl(canvas, true);
 
-  const result = await SceneLoader.ImportMeshAsync('', '/models/', 'lx-10.obj', scene);
+  const result = await SceneLoader.ImportMeshAsync('', './models/', 'lx-10.obj', scene);
 
   console.log(result.meshes);
 
