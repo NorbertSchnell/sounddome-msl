@@ -2,7 +2,7 @@
 
 This repository contains documentation and software concerning the sound dome at the Media Synthesis Lab (I0.07) at Furtwangen University. The sound dome features a 28.4 *Fohhn Audio* loudspeaker system on a surface of about 50m<sup>2</sup>.
 
-[3d-model](sounddome-msl/3d-model/public/)
+[3d-model](https://norbertschnell.github.io/sounddome-msl/3d-model/public/)
 : 3D visualisation of the sound dome using *babylon.js*
 
 max
