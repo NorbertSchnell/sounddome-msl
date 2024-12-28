@@ -1,5 +1,5 @@
 {
-  "name": "mean-position",
+  "name": "sounddome-mobile-control",
   "type": "module",
   "version": "0.1.0",
   "description": "a simple example using web sockets",
@@ -9,7 +9,7 @@
     "ws": "^7.4.4"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "echo \"Error: no  specified\" && exit 1",
     "transpile": "tsc *.ts",
     "start": "node server.js"
   },

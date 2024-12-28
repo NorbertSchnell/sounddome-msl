@@ -48,16 +48,6 @@ const speakers: SpeakerDescr[] = [
   { id: '5.6', cartesian: { x: 3.623, y: 2.151, z: -1.11 }, spherical: null },
 ];
 
-const spatXyz = [];
-
-for (let speaker of speakers) {
-  spatXyz.push(speaker.cartesian.x);
-  spatXyz.push(speaker.cartesian.y);
-  spatXyz.push(speaker.cartesian.z);
-}
-
-console.log(spatXyz);
-
 for (let speaker of speakers) {
   const coords = speaker.cartesian;
   const x = coords.x;
@@ -85,10 +75,7 @@ for (let speaker of speakers) {
   // const camera: FreeCamera = new FreeCamera('camera', new Vector3(0, 0, 0), scene);
   camera.attachControl(canvas, true);
 
-  const result = await SceneLoader.ImportMeshAsync('', './models/', 'lx-10.obj', scene);
-
-  console.log(result.meshes);
-
+  const result = await SceneLoader.ImportMeshAsync('', './assets/', 'lx-10.obj', scene);
   const lx10Model = result.meshes[0];
   lx10Model.scaling = new Vector3(0.001, 0.001, 0.001);
   lx10Model.setEnabled(false);
@@ -162,8 +149,6 @@ for (let speaker of speakers) {
 
   // hide/show the Inspector
   window.addEventListener('keydown', (ev) => {
-    // console.log(ev.key);
-
     if (ev.ctrlKey) {
       if (ev.key === 'i') {
         if (scene.debugLayer.isVisible()) {
