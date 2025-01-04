@@ -71,7 +71,7 @@ for (let speaker of speakers) {
   const engine = new Engine(canvas, true);
   const scene = new Scene(engine);
 
-  const camera = new ArcRotateCamera('camera', -Math.PI / 2, Math.PI / 4, 4, new Vector3(0, 1.76, 0));
+  const camera = new ArcRotateCamera('camera', -Math.PI / 2, Math.PI / 4, 10, new Vector3(0, 1.76, 0));
   // const camera: FreeCamera = new FreeCamera('camera', new Vector3(0, 0, 0), scene);
   camera.attachControl(canvas, true);
 

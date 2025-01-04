@@ -25,10 +25,12 @@ app.use(express.static('.'));
  * websoket server
  */
 const webSocketServer = new WebSocket.Server({ server: httpsServer });
-console.log(`websocket server listening on `);
+console.log(`websocket server listening on port ${httpPort}`);
 
 // listen to new web socket connections
 webSocketServer.on('connection', (socket, req) => {
+  console.log(`websocket server connected`);
+
   socket.on('message', (message) => {
     const incoming = JSON.parse(message);
     Max.outlet(incoming);
