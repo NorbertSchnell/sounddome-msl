@@ -187,7 +187,7 @@ function onAnimationFrame() {
   context.arc(centerX, centerY, 0.5 * circleSize, 0, 2 * Math.PI);
   context.fill();
 
-  messageElem.innerHTML = `${azimuth.toFixed(2)} ${elevation.toFixed(2)} ${distance.toFixed(2)}`;
+  messageElem.innerHTML = `${Math.round(azimuth)} | ${Math.round(elevation)} | ${distance.toFixed(2)}`;
 
   requestAnimationFrame(onAnimationFrame);
 }
@@ -196,14 +196,14 @@ function onAnimationFrame() {
  * websocket communication
  */
 const webSocketPort = 3000;
-const webSocketAddr = '192.168.178.23';
+// const webSocketAddr = '192.168.31.72';
+const webSocketAddr = window.location.hostname;
 
 const socket = new WebSocket(`wss://${webSocketAddr}:${webSocketPort}`);
 // const socket = new WebSocket(`ws://${webSocketAddr}:${webSocketPort}`);
 
 // listen to opening websocket connections
 socket.addEventListener('open', (event) => {
-
 });
 
 // listen to messages from server
