@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 598.0, 100.0, 663.0, 462.0 ],
+		"rect" : [ 881.0, 100.0, 597.0, 407.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -44,7 +44,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 44.0, 186.0, 100.0, 22.0 ],
+					"patching_rect" : [ 20.0, 160.0, 100.0, 22.0 ],
 					"text" : "s ctrl-source-aed"
 				}
 
@@ -56,7 +56,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 2,
 					"outlettype" : [ "", "" ],
-					"patching_rect" : [ 44.0, 129.0, 95.0, 22.0 ],
+					"patching_rect" : [ 20.0, 103.0, 95.0, 22.0 ],
 					"text" : "route orientation"
 				}
 
@@ -68,7 +68,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 44.0, 43.0, 66.0, 22.0 ],
+					"patching_rect" : [ 20.0, 17.0, 66.0, 22.0 ],
 					"text" : "script start"
 				}
 
@@ -80,7 +80,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 2,
 					"outlettype" : [ "", "" ],
-					"patching_rect" : [ 145.0, 129.0, 79.0, 22.0 ],
+					"patching_rect" : [ 121.0, 103.0, 79.0, 22.0 ],
 					"text" : "route running"
 				}
 
@@ -101,7 +101,7 @@
 					"numoutlets" : 1,
 					"offset" : [ 0.0, 0.0 ],
 					"outlettype" : [ "bang" ],
-					"patching_rect" : [ 205.0, 186.0, 400.0, 220.0 ],
+					"patching_rect" : [ 181.0, 160.0, 400.0, 220.0 ],
 					"viewvisibility" : 1
 				}
 
@@ -114,10 +114,12 @@
 					"numinlets" : 1,
 					"numoutlets" : 2,
 					"outlettype" : [ "", "" ],
-					"patching_rect" : [ 44.0, 82.0, 120.0, 35.0 ],
+					"patching_rect" : [ 20.0, 56.0, 120.0, 35.0 ],
 					"saved_object_attributes" : 					{
 						"autostart" : 1,
 						"defer" : 0,
+						"node_bin_path" : "",
+						"npm_bin_path" : "",
 						"watch" : 0
 					}
 ,
