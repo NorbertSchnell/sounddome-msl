@@ -1,12 +1,18 @@
 import '@babylonjs/core/Debug/debugLayer';
 import '@babylonjs/inspector';
 import '@babylonjs/loaders/glTF';
-import { Engine, Scene, SceneLoader, FreeCamera, ArcRotateCamera, HemisphericLight, PointLight, Vector3, Color3 } from '@babylonjs/core';
-import { MeshBuilder, Mesh, SubMesh } from '@babylonjs/core';
-import { StandardMaterial, MultiMaterial, Texture, DynamicTexture } from '@babylonjs/core';
-import { VertexData } from '@babylonjs/core';
+import { Engine, Scene, SceneLoader, ArcRotateCamera, HemisphericLight, PointLight, Vector3, Color3 } from '@babylonjs/core';
+import { MeshBuilder, Mesh, StandardMaterial } from '@babylonjs/core';
 import { GridMaterial } from '@babylonjs/materials';
 import { AdvancedDynamicTexture, TextBlock } from '@babylonjs/gui';
+
+// calculate x and y coordinates from the distances (a and b) from two reference points on the center line (on y-axis)
+// function getCoords(a, b) {
+//   const c = 1500; // distance between the two reference points
+//   const y = (a ** 2 - b ** 2 + c ** 2) / (2 * c);
+//   const x = Math.sqrt(a ** 2 - y ** 2);
+//   return [x, y];
+// }
 
 interface SpeakerDescr {
   id: string;
