@@ -9,7 +9,7 @@ This repository contains documentation and software for the sound dome at the Me
 
 ## TODO
 
-- [ ] label loudspeakers (ID), clamps ("Klangdom" + ID), the 5 stands ("Klangdom" + ID), cables ("Klangdom" ID)
+- [ ] label loudspeakers (ID), clamps ("Klangdom" + ID), the 5 stands ("Klangdom" + ID), cables ("Klangdom" + ID)
 - [ ] define final positions and cabling for subwoofers
 - [ ] perfect cabling of all loudspeakers
 - [ ] exchange the (smallest) stand of loudspeaker 5.4
