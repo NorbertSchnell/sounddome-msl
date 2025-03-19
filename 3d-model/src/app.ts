@@ -101,7 +101,7 @@ for (let speaker of speakers) {
   const ambientLight = new HemisphericLight('ambient-light', new Vector3(10, 10, 0), scene);
   ambientLight.intensity = 1;
 
-  const cameraLight = new PointLight('center-ight', new Vector3(0, 1.76, 0), scene);
+  const cameraLight = new PointLight('center-light', new Vector3(0, 1.76, 0), scene);
   cameraLight.intensity = 0.5;
 
   const center: Mesh = MeshBuilder.CreateSphere('sphere', { diameter: 0.33 }, scene);
