@@ -22,13 +22,15 @@ const webSocketServer = new WebSocket.Server({ server: httpServer });
 console.log(`websocket server listening`);
 
 webSocketServer.on('connection', (socket, req) => {
-  const playerIndex = addPlayerToList(socket);
+  const clientIndex = addClientToList(socket);
+  const clientId = clientIndex + 1;
 
-  sendMessage(socket, ['player-index', playerIndex]);
+  sendMessage(socket, ['client-id', clientId]);
   sendCurrentParameterValues(socket);
+  Max.outlet('client-connect', clientId);
 
-  const playerCount = getPlayerCount();
-  Max.outlet('player-count', playerCount);
+  const clientCount = getClientCount();
+  Max.outlet('client-count', clientCount);
 
   socket.on('message', (data) => {
     if (data.length > 0) {
@@ -37,11 +39,11 @@ webSocketServer.on('connection', (socket, req) => {
 
       switch (selector) {
         case 'sound': {
-          const playerIndex = message[1];
+          const clientId = message[1];
           const azimuth = message[2];
           const elevation = message[3];
           const distance = message[4];
-          Max.outlet('sound', playerIndex, azimuth, elevation, distance);
+          Max.outlet('sound', clientId, azimuth, elevation, distance);
           break;
         }
 
@@ -54,9 +56,11 @@ webSocketServer.on('connection', (socket, req) => {
   });
 
   socket.on('close', () => {
-    if (removePlayerFromList(socket) !== null) {
-      const playerCount = getPlayerCount();
-      Max.outlet('player-count', playerCount);
+    if (removeClientFromList(socket) !== null) {
+      Max.outlet('client-disconnect', clientId);
+
+      const clientCount = getClientCount();
+      Max.outlet('client-count', clientCount);
     }
   });
 });
@@ -66,9 +70,9 @@ function sendMessage(socket, message) {
   socket.send(str);
 }
 
-function sendToAllPlayers(message) {
+function sendToAllClients(message) {
   const str = JSON.stringify(message);
-  sendStrToSet(playerList, str);
+  sendStrToSet(clientList, str);
 }
 
 function sendStrToSet(set, str, except = null) {
@@ -92,7 +96,7 @@ const params = {
 for (let p in params) {
   Max.addHandler(p, (value) => {
     params[p] = value;
-    sendToAllPlayers([p, value]);
+    sendToAllClients([p, value]);
   });
 }
 
@@ -103,57 +107,57 @@ function sendCurrentParameterValues(socket) {
 }
 
 /****************************************************************
- * players
+ * clients
  */
-const playerList = [];
-const freePlayerIndices = new Set();
-const playerIndices = new Map();
+const clientList = [];
+const freeClientIndices = new Set();
+const clientIndices = new Map();
 
-function getFreePlayerIndex() {
-  const iter = freePlayerIndices.values();
+function getFreeClientIndex() {
+  const iter = freeClientIndices.values();
   const first = iter.next();
   const index = first.value;
 
   if (index !== undefined) {
-    freePlayerIndices.delete(index);
+    freeClientIndices.delete(index);
     return index;
   }
 
-  return playerList.length;
+  return clientList.length;
 }
 
-function addPlayerToList(socket) {
-  const playerIndex = getFreePlayerIndex();
+function addClientToList(socket) {
+  const clientIndex = getFreeClientIndex();
 
-  playerList[playerIndex] = socket;
-  playerIndices.set(socket, playerIndex);
+  clientList[clientIndex] = socket;
+  clientIndices.set(socket, clientIndex);
 
-  return playerIndex;
+  return clientIndex;
 }
 
-function removePlayerFromList(socket) {
-  const playerIndex = playerIndices.get(socket);
+function removeClientFromList(socket) {
+  const clientIndex = clientIndices.get(socket);
 
-  if (playerIndex !== undefined && playerList[playerIndex]) {
-    playerList[playerIndex] = null;
-    freePlayerIndices.add(playerIndex);
+  if (clientIndex !== undefined && clientList[clientIndex]) {
+    clientList[clientIndex] = null;
+    freeClientIndices.add(clientIndex);
 
     // clear list
-    let lastIndex = playerList.length - 1;
-    while (lastIndex >= 0 && playerList[lastIndex] === null) {
-      freePlayerIndices.delete(lastIndex);
-      playerList.length = lastIndex;
+    let lastIndex = clientList.length - 1;
+    while (lastIndex >= 0 && clientList[lastIndex] === null) {
+      freeClientIndices.delete(lastIndex);
+      clientList.length = lastIndex;
       lastIndex--;
     }
 
-    playerIndices.delete(socket);
+    clientIndices.delete(socket);
 
-    return playerIndex;
+    return clientIndex;
   }
 
   return null;
 }
 
-function getPlayerCount() {
-  return playerIndices.size;
+function getClientCount() {
+  return clientIndices.size;
 }

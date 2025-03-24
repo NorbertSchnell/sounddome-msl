@@ -30,8 +30,10 @@ console.log(`websocket server listening on port ${httpPort}`);
 // listen to new web socket connections
 webSocketServer.on('connection', (socket, req) => {
   const clientIndex = addClientToList(socket);
+  const clientId = clientIndex + 1;
 
-  sendMessage(socket, ['client-index', clientIndex]);
+  sendMessage(socket, ['client-id', clientId]);
+  Max.outlet('client-connect', clientId);
 
   const clientCount = getClientCount();
   Max.outlet('client-count', clientCount);
@@ -43,6 +45,8 @@ webSocketServer.on('connection', (socket, req) => {
 
   socket.on('close', () => {
     if (removeClientFromList(socket) !== null) {
+      Max.outlet('client-disconnect', clientId);
+
       const clientCount = getClientCount();
       Max.outlet('client-count', clientCount);
     }

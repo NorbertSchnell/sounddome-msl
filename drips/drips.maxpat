@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 123.0, 100.0, 721.0, 541.0 ],
+		"rect" : [ 735.0, 100.0, 721.0, 541.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -39,6 +39,17 @@
 		"subpatcher_template" : "",
 		"assistshowspatchername" : 0,
 		"boxes" : [ 			{
+				"box" : 				{
+					"id" : "obj-6",
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 153.0, 276.0, 32.0, 22.0 ],
+					"text" : "print"
+				}
+
+			}
+, 			{
 				"box" : 				{
 					"format" : 6,
 					"id" : "obj-2",
@@ -168,7 +179,7 @@
 					"numoutlets" : 3,
 					"outlettype" : [ "", "", "" ],
 					"patching_rect" : [ 19.0, 240.0, 153.0, 22.0 ],
-					"text" : "route sound player-count"
+					"text" : "route sound client-count"
 				}
 
 			}
@@ -228,8 +239,6 @@
 					"saved_object_attributes" : 					{
 						"autostart" : 1,
 						"defer" : 0,
-						"node_bin_path" : "",
-						"npm_bin_path" : "",
 						"watch" : 0
 					}
 ,
@@ -303,6 +312,13 @@
 			}
 , 			{
 				"patchline" : 				{
+					"destination" : [ "obj-6", 0 ],
+					"source" : [ "obj-20", 2 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
 					"destination" : [ "obj-7", 0 ],
 					"source" : [ "obj-20", 1 ]
 				}
@@ -357,7 +373,7 @@
 			}
 , 			{
 				"name" : "server.js",
-				"bootpath" : "~/University/Projekte/Klangdom-MSL/drips",
+				"bootpath" : "~/University/Projekte/Klangdom-MSL/sounddome-msl/drips",
 				"patcherrelativepath" : ".",
 				"type" : "TEXT",
 				"implicit" : 1

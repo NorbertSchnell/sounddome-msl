@@ -133,9 +133,10 @@ function onDeviceOrientation(e) {
   // paint stroke with normalized start and end coordinates and color
   const outgoing = ['orientation', clientId, -azimuth, elevation, distance];
 
-  // send paint stroke to server
-  const str = JSON.stringify(outgoing);
-  socket.send(str);
+  if (clientId !== null) {
+    const str = JSON.stringify(outgoing);
+    socket.send(str);
+  }
 }
 
 const minCircleSize = 20;
@@ -207,6 +208,11 @@ const socket = new WebSocket(`wss://${webSocketAddr}:${webSocketPort}`);
 socket.addEventListener('open', (event) => {
 });
 
+socket.addEventListener("close", (event) => {
+  clientId = null;
+  document.body.style.opacity = 0.333;
+});
+
 // listen to messages from server
 socket.addEventListener('message', (event) => {
   const message = event.data;
@@ -217,9 +223,8 @@ socket.addEventListener('message', (event) => {
 
     // dispatch incomming messages
     switch (selector) {
-      case 'client-index':
-        const clientIndex = incoming[1];
-        clientId = clientIndex + 1;
+      case 'client-id':
+        clientId = incoming[1];
         indexElem.innerHTML = clientId;
         break;
 

@@ -1,9 +1,9 @@
 const canvas = document.getElementById('canvas');
 const context = canvas.getContext('2d');
 const arrow = document.getElementById('arrow');
-let playerIndex = null;
-let playerHasStarted = false;
-let playerIsActive = true;
+let clientId = null;
+let clientHasStarted = false;
+let clientIsActive = true;
 let dripColor = null;
 
 let dripDuration = 4;
@@ -33,7 +33,7 @@ socket.addEventListener('open', (event) => {
     }
   }, 5000);
 
-  startPlayer();
+  startClient();
 
   // listen to messages from server
   socket.addEventListener('message', (event) => {
@@ -47,9 +47,9 @@ socket.addEventListener('open', (event) => {
 
         // dispatch incomming messages
         switch (selector) {
-          case 'player-index': {
-            playerIndex = message[1];
-            dripColor = colorMap[playerIndex % colorMap.length];
+          case 'client-id': {
+            clientId = message[1];
+            dripColor = colorMap[clientId % colorMap.length];
             break;
           }
 
@@ -83,6 +83,11 @@ socket.addEventListener('open', (event) => {
   });
 });
 
+socket.addEventListener("close", (event) => {
+  clientId = null;
+  document.body.style.opacity = 0.333;
+});
+
 function sendMessage(message) {
   const str = JSON.stringify(message);
   socket.send(str);
@@ -92,15 +97,15 @@ function sendMessage(message) {
  * graphics
  */
 let circleRenderer = null;
-const playerTitle = document.getElementById('player-title');
-const playerMessage = document.getElementById('player-message');
+const clientTitle = document.getElementById('client-title');
+const clientMessage = document.getElementById('client-message');
 let width = 0;
 let height = 0;
 let size = 0;
 let left = 0;
 let top = 0;
 
-playerTitle.innerText = 'Drips';
+clientTitle.innerText = 'Drips';
 
 function onResize() {
   const rect = document.body.getBoundingClientRect();
@@ -216,9 +221,9 @@ export class CircleRenderer {
 }
 
 /*********************************************
- * player
+ * client
  */
-function startPlayer() {
+function startClient() {
   if (circleRenderer === null) {
     circleRenderer = new CircleRenderer();
   }
@@ -226,7 +231,7 @@ function startPlayer() {
   window.addEventListener('resize', onResize);
   onResize();
 
-  playerHasStarted = true;
+  clientHasStarted = true;
   window.addEventListener('touchstart', onTouchStart);
   updateCount();
 }
@@ -239,7 +244,7 @@ function setMaxDrips(value) {
 }
 
 function updateCount() {
-  if (playerHasStarted && playerIsActive) {
+  if (clientHasStarted && clientIsActive) {
     const numAvailable = Math.max(0, maxDrips - circleRenderer.numCircles);
     let htmlContent = null;
 
@@ -255,7 +260,7 @@ function updateCount() {
     }
 
 
-    playerMessage.innerHTML = htmlContent;
+    clientMessage.innerHTML = htmlContent;
   }
 }
 
@@ -263,31 +268,32 @@ function updateCount() {
  * touch
  */
 function onTouchStart(e) {
-  const time = 0.001 * performance.now();
+  if (clientId !== null) {
+    const time = 0.001 * performance.now();
 
-  for (let touch of e.changedTouches) {
-    const id = touch.identifier;
-    const x = 4 * (touch.pageX - 0.5 * width) / size;
-    const y = -4 * (touch.pageY - 0.5 * height) / size;
-    let azimuth = 0.5 * Math.PI - Math.atan2(y, x);
-    let elevation = 0;
-    let distance = Math.sqrt(x * x + y * y);
+    for (let touch of e.changedTouches) {
+      const id = touch.identifier;
+      const x = 4 * (touch.pageX - 0.5 * width) / size;
+      const y = -4 * (touch.pageY - 0.5 * height) / size;
+      let azimuth = 0.5 * Math.PI - Math.atan2(y, x);
+      let elevation = 0;
+      let distance = Math.sqrt(x * x + y * y);
 
-    if (azimuth > Math.PI) {
-      azimuth = azimuth - 2 * Math.PI;
-    }
+      if (azimuth > Math.PI) {
+        azimuth = azimuth - 2 * Math.PI;
+      }
 
-    if (distance < 1) {
-      elevation = 0.5 * Math.PI * (1 - distance);
-      distance = 1;
-    }
+      if (distance < 1) {
+        elevation = 0.5 * Math.PI * (1 - distance);
+        distance = 1;
+      }
 
-    if (circleRenderer.numCircles < maxDrips) {
-      circleRenderer.start(x, y, dripColor, dripDuration, timeoutDuration);
-      sendMessage(['sound', playerIndex, azimuth, elevation, distance]);
-      updateCount();
+      if (circleRenderer.numCircles < maxDrips) {
+        circleRenderer.start(x, y, dripColor, dripDuration, timeoutDuration);
+        sendMessage(['sound', clientId, azimuth, elevation, distance]);
+        updateCount();
+      }
     }
   }
-
   e.preventDefault();
 }
