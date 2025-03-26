@@ -4,6 +4,7 @@ import https from 'https';
 import * as fs from 'fs';
 import * as Max from 'max-api';
 
+// mkdir sslcert
 // openssl req -x509 -sha256 -nodes -days 365 -newkey rsa:2048 -keyout sslcert/selfsigned.key -out sslcert/selfsigned.crt
 const key = fs.readFileSync('sslcert/selfsigned.key', 'utf8');
 const cert = fs.readFileSync('sslcert/selfsigned.crt', 'utf8');
