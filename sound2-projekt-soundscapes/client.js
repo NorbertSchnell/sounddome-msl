@@ -30,6 +30,7 @@ function updateCanvasSize() {
   canvas.height = window.innerHeight;
 }
 
+/*
 //touching the phone
 let touchId = null;
 let touchStartY = null;
@@ -76,6 +77,7 @@ function onTouchMove(e) { //user moves while touching
 function onTouchEnd(e) { 
   touchId = null;
 }
+*/
 
 async function init() {
   messageElem.innerText = '';
@@ -84,9 +86,9 @@ async function init() {
 
   if (DeviceOrientationEvent) {
     if (DeviceOrientationEvent.requestPermission) {
-      const permssion = await DeviceOrientationEvent.requestPermission();
+      const permission = await DeviceOrientationEvent.requestPermission();
 
-      if (permssion == "granted") {
+      if (permission == "granted") {
         start();
       } else {
         setErrorMessage("no permission for device orientation");
@@ -223,7 +225,7 @@ socket.addEventListener('message', (event) => {
 
   if (message.length > 0) {
     const incoming = JSON.parse(message);
-    const selector = incoming[0];
+    const selector = incoming[0]; //message carries client id
 
     // dispatch incomming messages
     switch (selector) {
