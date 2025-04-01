@@ -78,6 +78,40 @@ function onTouchEnd(e) {
   touchId = null;
 }
 */
+//touching phone (from drips) to get azimuth, distance, elevation from touched coordinates
+function onTouchStart(e) {
+  if (clientId !== null) {
+    const time = 0.001 * performance.now();
+  }
+}
+
+function onTouchEnd(e) {
+  touchId = null;
+
+  if (time <= 0.15) {
+    for (let touch of e.changedTouches) {
+      const id = touch.identifier;
+      const x = 4 * (touch.pageX - 0.5 * width) / size;
+      const y = -4 * (touch.pageY - 0.5 * height) / size;
+      let azimuth = 0.5 * Math.PI - Math.atan2(y, x);
+      let elevation = 0;
+      let distance = Math.sqrt(x * x + y * y);
+
+      if (azimuth > Math.PI) {      
+        azimuth = azimuth - 2 * Math.PI;
+      }
+
+      if (distance < 1) {
+        elevation = 0.5 * Math.PI * (1 - distance);
+        distance = 1;
+      }
+    }
+
+    sendMessage(['sound', clientId, azimuth, elevation, distance]);
+  }
+}
+
+
 
 async function init() {
   messageElem.innerText = '';
@@ -100,6 +134,8 @@ async function init() {
     setErrorMessage("device orientation not available");
   }
 }
+
+  
 
 function start() {
   window.addEventListener("deviceorientation", onDeviceOrientation);

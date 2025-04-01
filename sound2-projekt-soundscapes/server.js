@@ -42,6 +42,15 @@ webSocketServer.on('connection', (socket, req) => {
   socket.on('message', (message) => {
     const incoming = JSON.parse(message);
     Max.outlet(incoming);
+
+    if (incoming[0] == 'sound') { //incoming message is sound from client phone touch
+    const activeClient = incoming[1];
+    const randomSound = (activeClient).toString() +  (Math.floor(Math.random() * 2)).toString(); 
+    
+    Max.outlet('Sound', activeClient, randomSound);
+
+    //playerId is paired with random number between 0 and 2, allowing for unique numbers for different sounds
+    }
   });
 
   socket.on('close', () => {
