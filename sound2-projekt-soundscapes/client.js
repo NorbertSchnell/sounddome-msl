@@ -109,6 +109,34 @@ function onTouchEnd(e) {
 
     sendMessage(['sound', clientId, azimuth, elevation, distance]);
   }
+
+  else {
+    if (touchId === null) {
+      const touch = e.touches[0];
+      const id = touch.identifier;
+      const y = touch.pageY;
+  
+      touchId = id;
+      touchStartY = y;
+      startDistance = distance;
+    }
+    
+  }
+
+  function onTouchMove(e) { //user moves while touching
+    for (let touch of e.touches) {
+      if (touch.identifier === touchId) {
+        const y = touch.pageY;
+        const dY = touchStartY - y;
+        const dist = 2 * (maxDistance - minDistance) * dY / canvas.height;
+  
+        distance = Math.max(minDistance, Math.min(maxDistance, startDistance + dist));
+        break;
+      }
+    }
+  }
+
+  
 }
 
 
