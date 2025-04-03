@@ -2,10 +2,7 @@ import express from 'express';
 import WebSocket from 'ws';
 import https from 'https';
 import * as fs from 'fs';
-import * as Max from 'max-api';
-
-// const Max = {};
-// Max.outlet = console.log;
+import { Client } from 'node-osc';
 
 // mkdir sslcert
 // openssl req -x509 -sha256 -nodes -days 365 -newkey rsa:2048 -keyout sslcert/selfsigned.key -out sslcert/selfsigned.crt
@@ -13,9 +10,10 @@ const key = fs.readFileSync('sslcert/selfsigned.key', 'utf8');
 const cert = fs.readFileSync('sslcert/selfsigned.crt', 'utf8');
 const credentials = { key, cert };
 
-const maxClientCount = 6; 
+const maxClientCount = 6;
 
 console.log(`sound dome node server running`);
+const oscClient = new Client('localhost', 4000);
 
 /****************************************************************
  * http server
@@ -42,34 +40,44 @@ webSocketServer.on('connection', (socket, req) => {
     const clientId = clientIndex;
 
     sendMessage(socket, ['client-id', clientId]);
-    Max.outlet('client-connect', clientId);
+    oscClient.send('client-connect', clientId);
 
     const clientCount = getClientCount();
-    Max.outlet('client-count', clientCount);
+    oscClient.send('client-count', clientCount);
 
     socket.on('message', (message) => {
       const incoming = JSON.parse(message);
-      Max.outlet(incoming);
 
-     if (incoming[0] == 'sound') { //incoming message is sound from client phone touch
-      const activeClient = incoming[1];
-      const randomSound = (activeClient).toString() +  (Math.floor(Math.random() * 2)).toString(); 
-    
-      Max.outlet('Sound', activeClient, randomSound);
+      switch (incoming[0]) {
+        case 'orientation': {
+          const clientId = incoming[1];
+          const azimuth = incoming[2];
+          const distance = incoming[3];
+          const elevation = incoming[4];
+          oscClient.send('orientation', clientId, azimuth, distance, elevation);
+          break;
+        }
 
-    //playerId is paired with random number between 0 and 2, allowing for unique numbers for different sounds
-    }
-  })
+        case 'sound': {
+          const clientId = incoming[1];
+          const randomSound = (clientId).toString() + (Math.floor(Math.random() * 2)).toString();
+
+          // playerId is paired with random number between 0 and 2, allowing for unique numbers for different sounds
+          oscClient.send('sound', clientId, randomSound);
+          break;
+        }
+      }
+    })
+
+    socket.on('close', () => {
+      if (removeClientFromList(socket) !== null) {
+        oscClient.send('client-disconnect', clientId);
+
+        const clientCount = getClientCount();
+        oscClient.send('client-count', clientCount);
+      }
+    });
   };
-
-  socket.on('close', () => {
-    if (removeClientFromList(socket) !== null) {
-      Max.outlet('client-disconnect', clientId);
-
-      const clientCount = getClientCount();
-      Max.outlet('client-count', clientCount);
-    }
-  });
 });
 
 function sendMessage(socket, message) {
@@ -131,4 +139,10 @@ function removeClientFromList(socket) {
 
 function getClientCount() {
   return clientIndices.size;
+}
+
+function onOscError(err) {
+  if (err) {
+    console.error(err);
+  }
 }

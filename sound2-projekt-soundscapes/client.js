@@ -81,6 +81,7 @@ function onClick() {
 //touching phone (from drips) to get azimuth, distance, elevation from touched coordinates
 function onTouchStart(e) {
   if (touchId === null) {
+    const touch = e.touches[0];
     const id = touch.identifier;
     const y = touch.pageY;
 
@@ -89,8 +90,6 @@ function onTouchStart(e) {
     startDistance = distance;
 
     touchStartTime = 0.001 * performance.now();
-
-    const touch = e.touches[0];
   }
 }
 
@@ -112,39 +111,14 @@ function onTouchMove(e) { //user moves while touching
 function onTouchEnd(e) {
   touchId = null;
 
-
   for (let touch of e.changedTouches) {
     if (touch.identifier === touchId) {
-      const id = touch.identifier;
-      const x = 4 * (touch.pageX - 0.5 * width) / size;
-      const y = -4 * (touch.pageY - 0.5 * height) / size;
-      let azimuth = 0.5 * Math.PI - Math.atan2(y, x);
-      let elevation = 0;
-      let distance = Math.sqrt(x * x + y * y);
+      const touchEndTime = 0.001 * performance.now();
 
-      if (azimuth > Math.PI) {
-        azimuth = azimuth - 2 * Math.PI;
-      }
-
-      if (distance < 1) {
-        elevation = 0.5 * Math.PI * (1 - distance);
-        distance = 1;
+      if (touchStartTime !== null && touchEndTime - touchStartTime < 0.15) {
+        sendMessage(['sound', clientId]);
       }
     }
-
-    sendMessage(['sound', clientId, azimuth, elevation, distance]);
-  }
-
-  //if the touch time was longer than 150 ms
-  if (touchId === null) {
-    const touch = e.touches[0];
-    const id = touch.identifier;
-    const y = touch.pageY;
-
-    touchId = id;
-    touchStartY = y;
-    startDistance = distance;
-
   }
 }
 
@@ -311,3 +285,7 @@ socket.addEventListener('message', (event) => {
   }
 });
 
+function sendMessage(message) {
+  const str = JSON.stringify(message);
+  socket.send(str);
+}

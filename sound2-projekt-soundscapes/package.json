@@ -6,7 +6,8 @@
   "main": "server.js",
   "dependencies": {
     "express": "^4.18.2",
-    "ws": "^7.4.4"
+    "ws": "^7.4.4",
+    "node-osc": "^9.1.2"
   },
   "scripts": {
     "test": "echo \"Error: no  specified\" && exit 1",
