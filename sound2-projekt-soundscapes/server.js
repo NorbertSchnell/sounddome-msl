@@ -23,7 +23,7 @@ const httpsServer = https
 app.use(express.static('.'));
 
 /****************************************************************
- * websoket server
+ * websocket server
  */
 const webSocketServer = new WebSocket.Server({ server: httpsServer });
 console.log(`websocket server listening on port ${httpPort}`);

@@ -110,7 +110,7 @@ function onTouchEnd(e) {
     sendMessage(['sound', clientId, azimuth, elevation, distance]);
   }
 
-  else {
+  else { //touch was longer than 150 ms
     if (touchId === null) {
       const touch = e.touches[0];
       const id = touch.identifier;
@@ -122,8 +122,9 @@ function onTouchEnd(e) {
     }
     
   }
+}
 
-  function onTouchMove(e) { //user moves while touching
+function onTouchMove(e) { //user moves while touching
     for (let touch of e.touches) {
       if (touch.identifier === touchId) {
         const y = touch.pageY;
@@ -135,9 +136,6 @@ function onTouchEnd(e) {
       }
     }
   }
-
-  
-}
 
 
 
