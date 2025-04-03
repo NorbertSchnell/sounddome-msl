@@ -12,7 +12,7 @@ let azimuth = 0;
 let elevation = 0;
 let distance = 3;
 let refAlpha = null;
-let time = 0;
+let touchStartTime = null;
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 event listeners*/
@@ -31,34 +31,66 @@ function updateCanvasSize() {
   canvas.height = window.innerHeight;
 }
 
-/*
-//touching the phone
+// touching the phone
 let touchId = null;
 let touchStartY = null;
 let startDistance = null;
-let lastTime = null;
+let lastClickTime = null;
 
 function onClick() {
   const time = performance.now();
 
-  if (lastTime === null) {
+  if (lastClickTime === null) {
     init();
-  } else if (time - lastTime < 200) {
+  } else if (time - lastClickTime < 200) {
     refAlpha = null;
   }
 
-  lastTime = time;
+  lastClickTime = time;
 }
 
-function onTouchStart(e) { //when user starts to touch the screen
+// function onTouchStart(e) { //when user starts to touch the screen
+//   if (touchId === null) {
+//     const touch = e.touches[0];
+//     const id = touch.identifier;
+//     const y = touch.pageY;
+
+//     touchId = id;
+//     touchStartY = y;
+//     startDistance = distance;
+//   }
+// }
+
+// function onTouchMove(e) { //user moves while touching
+//   for (let touch of e.touches) {
+//     if (touch.identifier === touchId) {
+//       const y = touch.pageY;
+//       const dY = touchStartY - y;
+//       const dist = 2 * (maxDistance - minDistance) * dY / canvas.height;
+
+//       distance = Math.max(minDistance, Math.min(maxDistance, startDistance + dist));
+//       break;
+//     }
+//   }
+// }
+
+// function onTouchEnd(e) { 
+//   touchId = null;
+// }
+
+//touching phone (from drips) to get azimuth, distance, elevation from touched coordinates
+function onTouchStart(e) {
   if (touchId === null) {
-    const touch = e.touches[0];
     const id = touch.identifier;
     const y = touch.pageY;
 
     touchId = id;
     touchStartY = y;
     startDistance = distance;
+
+    touchStartTime = 0.001 * performance.now();
+
+    const touch = e.touches[0];
   }
 }
 
@@ -69,29 +101,20 @@ function onTouchMove(e) { //user moves while touching
       const dY = touchStartY - y;
       const dist = 2 * (maxDistance - minDistance) * dY / canvas.height;
 
+      touchStartTime = null;
+
       distance = Math.max(minDistance, Math.min(maxDistance, startDistance + dist));
       break;
     }
   }
 }
 
-function onTouchEnd(e) { 
-  touchId = null;
-}
-*/
-//touching phone (from drips) to get azimuth, distance, elevation from touched coordinates
-function onTouchStart(e) {
-  if (clientId !== null) {
-    time = 0;
-    time = 0.001 * performance.now();
-  }
-}
-
 function onTouchEnd(e) {
   touchId = null;
 
-  if (time <= 0.15) { //if touch time was shorter than 0.15 ms
-    for (let touch of e.changedTouches) {
+
+  for (let touch of e.changedTouches) {
+    if (touch.identifier === touchId) {
       const id = touch.identifier;
       const x = 4 * (touch.pageX - 0.5 * width) / size;
       const y = -4 * (touch.pageY - 0.5 * height) / size;
@@ -99,7 +122,7 @@ function onTouchEnd(e) {
       let elevation = 0;
       let distance = Math.sqrt(x * x + y * y);
 
-      if (azimuth > Math.PI) {      
+      if (azimuth > Math.PI) {
         azimuth = azimuth - 2 * Math.PI;
       }
 
@@ -112,36 +135,18 @@ function onTouchEnd(e) {
     sendMessage(['sound', clientId, azimuth, elevation, distance]);
   }
 
-  else { //if the touch time was longer than 150 ms
-    if (touchId === null) {
-      const touch = e.touches[0];
-      const id = touch.identifier;
-      const y = touch.pageY;
-  
-      touchId = id;
-      touchStartY = y;
-      startDistance = distance;
-    }
-    
+  //if the touch time was longer than 150 ms
+  if (touchId === null) {
+    const touch = e.touches[0];
+    const id = touch.identifier;
+    const y = touch.pageY;
+
+    touchId = id;
+    touchStartY = y;
+    startDistance = distance;
+
   }
 }
-
-function onTouchMove(e) { //user moves while touching
-    if (time >= 0.15) {
-      for (let touch of e.touches) {
-       if (touch.identifier === touchId) {
-         const y = touch.pageY;
-         const dY = touchStartY - y;
-         const dist = 2 * (maxDistance - minDistance) * dY / canvas.height;
-  
-          distance = Math.max(minDistance, Math.min(maxDistance, startDistance + dist));
-          break;
-      }
-    }
-    }
-  }
-
-
 
 async function init() {
   messageElem.innerText = '';
@@ -165,7 +170,7 @@ async function init() {
   }
 }
 
-  
+
 
 function start() {
   window.addEventListener("deviceorientation", onDeviceOrientation);

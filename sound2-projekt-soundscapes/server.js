@@ -4,6 +4,9 @@ import https from 'https';
 import * as fs from 'fs';
 import * as Max from 'max-api';
 
+// const Max = {};
+// Max.outlet = console.log;
+
 // mkdir sslcert
 // openssl req -x509 -sha256 -nodes -days 365 -newkey rsa:2048 -keyout sslcert/selfsigned.key -out sslcert/selfsigned.crt
 const key = fs.readFileSync('sslcert/selfsigned.key', 'utf8');
@@ -11,6 +14,8 @@ const cert = fs.readFileSync('sslcert/selfsigned.crt', 'utf8');
 const credentials = { key, cert };
 
 const maxClientCount = 6; 
+
+console.log(`sound dome node server running`);
 
 /****************************************************************
  * http server
@@ -34,7 +39,7 @@ console.log(`websocket server listening on port ${httpPort}`);
 webSocketServer.on('connection', (socket, req) => {
   if (getClientCount() < maxClientCount) {
     const clientIndex = addClientToList(socket);
-    const clientId = clientIndex + 1;
+    const clientId = clientIndex;
 
     sendMessage(socket, ['client-id', clientId]);
     Max.outlet('client-connect', clientId);
