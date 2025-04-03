@@ -10,6 +10,8 @@ const key = fs.readFileSync('sslcert/selfsigned.key', 'utf8');
 const cert = fs.readFileSync('sslcert/selfsigned.crt', 'utf8');
 const credentials = { key, cert };
 
+const maxClientCount = 6;
+
 /****************************************************************
  * http server
  */
@@ -30,28 +32,30 @@ console.log(`websocket server listening on port ${httpPort}`);
 
 // listen to new web socket connections
 webSocketServer.on('connection', (socket, req) => {
-  const clientIndex = addClientToList(socket);
-  const clientId = clientIndex + 1;
+  if (getClientCount() <= maxClientCount) {
+    const clientIndex = addClientToList(socket);
+    const clientId = clientIndex + 1;
 
-  sendMessage(socket, ['client-id', clientId]);
-  Max.outlet('client-connect', clientId);
+    sendMessage(socket, ['client-id', clientId]);
+    Max.outlet('client-connect', clientId);
 
-  const clientCount = getClientCount();
-  Max.outlet('client-count', clientCount);
+    const clientCount = getClientCount();
+    Max.outlet('client-count', clientCount);
 
-  socket.on('message', (message) => {
-    const incoming = JSON.parse(message);
-    Max.outlet(incoming);
+    socket.on('message', (message) => {
+      const incoming = JSON.parse(message);
+      Max.outlet(incoming);
 
-    if (incoming[0] == 'sound') { //incoming message is sound from client phone touch
-    const activeClient = incoming[1];
-    const randomSound = (activeClient).toString() +  (Math.floor(Math.random() * 2)).toString(); 
+     if (incoming[0] == 'sound') { //incoming message is sound from client phone touch
+      const activeClient = incoming[1];
+      const randomSound = (activeClient).toString() +  (Math.floor(Math.random() * 2)).toString(); 
     
-    Max.outlet('Sound', activeClient, randomSound);
+      Max.outlet('Sound', activeClient, randomSound);
 
     //playerId is paired with random number between 0 and 2, allowing for unique numbers for different sounds
     }
-  });
+  })
+  };
 
   socket.on('close', () => {
     if (removeClientFromList(socket) !== null) {
