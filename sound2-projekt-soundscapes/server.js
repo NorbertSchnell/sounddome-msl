@@ -10,7 +10,7 @@ const key = fs.readFileSync('sslcert/selfsigned.key', 'utf8');
 const cert = fs.readFileSync('sslcert/selfsigned.crt', 'utf8');
 const credentials = { key, cert };
 
-const maxClientCount = 6;
+const maxClientCount = 6; 
 
 /****************************************************************
  * http server
@@ -32,7 +32,7 @@ console.log(`websocket server listening on port ${httpPort}`);
 
 // listen to new web socket connections
 webSocketServer.on('connection', (socket, req) => {
-  if (getClientCount() <= maxClientCount) {
+  if (getClientCount() < maxClientCount) {
     const clientIndex = addClientToList(socket);
     const clientId = clientIndex + 1;
 

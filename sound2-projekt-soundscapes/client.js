@@ -12,6 +12,7 @@ let azimuth = 0;
 let elevation = 0;
 let distance = 3;
 let refAlpha = null;
+let time = 0;
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 event listeners*/
@@ -81,7 +82,8 @@ function onTouchEnd(e) {
 //touching phone (from drips) to get azimuth, distance, elevation from touched coordinates
 function onTouchStart(e) {
   if (clientId !== null) {
-    const time = 0.001 * performance.now();
+    time = 0;
+    time = 0.001 * performance.now();
   }
 }
 
@@ -125,15 +127,17 @@ function onTouchEnd(e) {
 }
 
 function onTouchMove(e) { //user moves while touching
-    for (let touch of e.touches) {
-      if (touch.identifier === touchId) {
-        const y = touch.pageY;
-        const dY = touchStartY - y;
-        const dist = 2 * (maxDistance - minDistance) * dY / canvas.height;
+    if (time >= 0.15) {
+      for (let touch of e.touches) {
+       if (touch.identifier === touchId) {
+         const y = touch.pageY;
+         const dY = touchStartY - y;
+         const dist = 2 * (maxDistance - minDistance) * dY / canvas.height;
   
-        distance = Math.max(minDistance, Math.min(maxDistance, startDistance + dist));
-        break;
+          distance = Math.max(minDistance, Math.min(maxDistance, startDistance + dist));
+          break;
       }
+    }
     }
   }
 
