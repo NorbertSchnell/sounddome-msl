@@ -90,7 +90,7 @@ function onTouchStart(e) {
 function onTouchEnd(e) {
   touchId = null;
 
-  if (time <= 0.15) {
+  if (time <= 0.15) { //if touch time was shorter than 0.15 ms
     for (let touch of e.changedTouches) {
       const id = touch.identifier;
       const x = 4 * (touch.pageX - 0.5 * width) / size;
@@ -112,7 +112,7 @@ function onTouchEnd(e) {
     sendMessage(['sound', clientId, azimuth, elevation, distance]);
   }
 
-  else { //if touch was longer than 150 ms
+  else { //if the touch time was longer than 150 ms
     if (touchId === null) {
       const touch = e.touches[0];
       const id = touch.identifier;
