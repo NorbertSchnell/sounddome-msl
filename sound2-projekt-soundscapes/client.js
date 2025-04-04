@@ -100,17 +100,17 @@ function onTouchMove(e) { //user moves while touching
       const dY = touchStartY - y;
       const dist = 2 * (maxDistance - minDistance) * dY / canvas.height;
 
-      touchStartTime = null;
+      if (dist > 20) {
+        touchStartTime = null;
+        distance = Math.max(minDistance, Math.min(maxDistance, startDistance + dist - 20));
+      }
 
-      distance = Math.max(minDistance, Math.min(maxDistance, startDistance + dist));
       break;
     }
   }
 }
 
 function onTouchEnd(e) {
-  touchId = null;
-
   for (let touch of e.changedTouches) {
     if (touch.identifier === touchId) {
       const touchEndTime = 0.001 * performance.now();
@@ -118,6 +118,8 @@ function onTouchEnd(e) {
       if (touchStartTime !== null && touchEndTime - touchStartTime < 0.15) {
         sendMessage(['sound', clientId]);
       }
+
+      touchId = null;
     }
   }
 }
@@ -182,7 +184,7 @@ function onDeviceOrientation(e) {
   }
 
   // paint stroke with normalized start and end coordinates and color
-  const outgoing = ['orientation', clientId, -azimuth, elevation, distance];
+  const outgoing = ['orientation', clientId, -azimuth, 40, elevation];
 
   if (clientId !== null) {
     const str = JSON.stringify(outgoing);

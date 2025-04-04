@@ -60,7 +60,7 @@ webSocketServer.on('connection', (socket, req) => {
 
         case 'sound': {
           const clientId = incoming[1];
-          const randomSound = (clientId).toString() + (Math.floor(Math.random() * 2)).toString();
+          const randomSound = Math.floor(Math.random() * 3);
 
           // playerId is paired with random number between 0 and 2, allowing for unique numbers for different sounds
           oscClient.send('sound', clientId, randomSound);
