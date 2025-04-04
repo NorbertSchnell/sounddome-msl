@@ -183,6 +183,8 @@ function onDeviceOrientation(e) {
     azimuth -= 360;
   }
 
+  const distance = document.getElementById('distance-slider').value ;//get slider value for distance
+
   // paint stroke with normalized start and end coordinates and color
   const outgoing = ['orientation', clientId, -azimuth, 40, elevation];
 
