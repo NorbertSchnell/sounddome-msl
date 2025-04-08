@@ -2,18 +2,33 @@
 <html lang="de">
 
 <head>
-  <title>Sound Dome | Mobile Control</title>
-  <meta charset="utf-8">
-  <meta name="viewport"
-    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
-  <link rel="stylesheet" href="style.css">
-  <script language="JavaScript" type="module" src="client.js" defer></script>
+    <title>Sound Dome | Mobile Control</title>
+    <meta charset="utf-8">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+    <link rel="stylesheet" href="style.css">
+    <script language="JavaScript" type="module" src="client.js" defer></script>
 </head>
 
 <body>
-  <div id="message-display"></div>
-  <canvas id="canvas"></canvas>
-  <div id="client-index">-</div>
+    <div id="message-display"></div>
+    <canvas id="canvas"></canvas>
+    <div id="client-index">-</div>
+
+    <div id="distance-slider">
+        <input type="range" min="0" max="100" value="50" />
+    </div>
+
+
+    <div id="compass">
+        <div id="north" class="compass-letter">N</div>
+        <div id="east" class="compass-letter">E</div>
+        <div id="south" class="compass-letter">S</div>
+        <div id="west" class="compass-letter">W</div>
+    </div>
+
+
+
 </body>
 
 </html>

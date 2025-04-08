@@ -126,6 +126,9 @@ function onTouchEnd(e) {
 
 async function init() {
   messageElem.innerText = '';
+  
+  document.getElementById('compass').classList.add('compass-visible');
+  document.getElementById('distance-slider').classList.add('visible');
 
   updateCanvasSize();
 
