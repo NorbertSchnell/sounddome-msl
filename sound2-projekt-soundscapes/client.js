@@ -21,6 +21,7 @@ let circleDuration = 2000;
 let time = 0;
 let timeLastTouch = null;
 let touchCooldown = 100;
+let lastFrameTime = 0;
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 event listeners*/
@@ -268,10 +269,10 @@ function onAnimationFrame() {
   context.fill();
 
   messageElem.innerHTML = `${Math.round(azimuth)} | ${Math.round(elevation)} | ${distance.toFixed(2)}`;
-
+  dt = performance.now() - lastFrameTime;
 
   for (circle of circles) {
-    circle.render(); //dt?
+    circle.render(dt, window.width, window.height); //dt?
   }
 
   requestAnimationFrame(onAnimationFrame);
