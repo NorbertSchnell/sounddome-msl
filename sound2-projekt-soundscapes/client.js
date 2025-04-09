@@ -269,12 +269,13 @@ function onAnimationFrame() {
   context.fill();
 
   messageElem.innerHTML = `${Math.round(azimuth)} | ${Math.round(elevation)} | ${distance.toFixed(2)}`;
-  dt = performance.now() - lastFrameTime;
 
+  dt = performance.now() - lastFrameTime;
   for (circle of circles) {
     circle.render(dt, window.width, window.height); //dt?
   }
 
+  lastFrameTime = performance.now();
   requestAnimationFrame(onAnimationFrame);
 }
 
