@@ -325,14 +325,5 @@ function sendMessage(message) {
   socket.send(str);
 }
 
-//offline warning
-const offlineWarning = document.getElementById('offline-warning');
 
-window.addEventListener('offline', () => {
-  offlineWarning.style.display = 'flex';
-});
-
-window.addEventListener('online', () => {
-  offlineWarning.style.display = 'none';
-});
 
