@@ -13,6 +13,7 @@ let elevation = 0;
 let distance = 3;
 let refAlpha = null;
 let touchStartTime = null;
+let touchCooldown = 100;
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 event listeners*/
@@ -126,7 +127,7 @@ function onTouchEnd(e) {
 
 async function init() {
   messageElem.innerText = '';
-  
+
   document.getElementById('compass').classList.add('compass-visible');
   document.getElementById('distance-slider').classList.add('visible');
 
@@ -268,7 +269,7 @@ socket.addEventListener('open', (event) => {
 
 socket.addEventListener("close", (event) => {
   clientId = null;
-  document.body.style.opacity = 0.333;
+  //document.body.style.opacity = 0.333;
 });
 
 // listen to messages from server
@@ -296,3 +297,15 @@ function sendMessage(message) {
   const str = JSON.stringify(message);
   socket.send(str);
 }
+
+//offline warning
+const offlineWarning = document.getElementById('offline-warning');
+
+window.addEventListener('offline', () => {
+    offlineWarning.style.display = 'flex';
+});
+
+window.addEventListener('online', () => {
+    offlineWarning.style.display = 'none';
+});
+
