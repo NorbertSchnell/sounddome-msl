@@ -13,6 +13,13 @@ let elevation = 0;
 let distance = 3;
 let refAlpha = null;
 let touchStartTime = null;
+
+let circles = [];
+let circleColor = "red";
+let circleDuration = 2000;
+
+let time = 0;
+let timeLastTouch = null;
 let touchCooldown = 100;
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -81,16 +88,24 @@ function onClick() {
 
 //touching phone (from drips) to get azimuth, distance, elevation from touched coordinates
 function onTouchStart(e) {
+
+  time = performance.now();
   if (touchId === null) {
-    const touch = e.touches[0];
-    const id = touch.identifier;
-    const y = touch.pageY;
+    if (time - timeLastTouch >= touchCooldown) {
+      const touch = e.touches[0];
+      const id = touch.identifier;
+      const y = touch.pageY;
+      const x = touch.pageX;
 
-    touchId = id;
-    touchStartY = y;
-    startDistance = distance;
+      touchId = id;
+      touchStartY = y;
+      startDistance = distance;
 
-    touchStartTime = 0.001 * performance.now();
+      touchStartTime = 0.001 * performance.now();
+
+      const newCircle = new Circle(x, y, circleDuration, circleColor);
+      circles.push(newCircle);
+    }
   }
 }
 
@@ -121,6 +136,8 @@ function onTouchEnd(e) {
       }
 
       touchId = null;
+
+      timeLastTouch = performance.now();
     }
   }
 }
@@ -187,7 +204,7 @@ function onDeviceOrientation(e) {
     azimuth -= 360;
   }
 
-  const distance = document.getElementById('distance-slider').value ;//get slider value for distance
+  const distance = document.getElementById('distance-slider').value;//get slider value for distance
 
   // paint stroke with normalized start and end coordinates and color
   const outgoing = ['orientation', clientId, -azimuth, 40, elevation];
@@ -202,6 +219,7 @@ const minCircleSize = 20;
 const maxCircleSize = 120;
 
 function onAnimationFrame() {
+
   const width = canvas.width;
   const height = canvas.height;
   const maxRadius = Math.min(width, height) / 2.7;
@@ -250,6 +268,11 @@ function onAnimationFrame() {
   context.fill();
 
   messageElem.innerHTML = `${Math.round(azimuth)} | ${Math.round(elevation)} | ${distance.toFixed(2)}`;
+
+
+  for (circle of circles) {
+    circle.render(); //dt?
+  }
 
   requestAnimationFrame(onAnimationFrame);
 }
@@ -302,10 +325,10 @@ function sendMessage(message) {
 const offlineWarning = document.getElementById('offline-warning');
 
 window.addEventListener('offline', () => {
-    offlineWarning.style.display = 'flex';
+  offlineWarning.style.display = 'flex';
 });
 
 window.addEventListener('online', () => {
-    offlineWarning.style.display = 'none';
+  offlineWarning.style.display = 'none';
 });
 

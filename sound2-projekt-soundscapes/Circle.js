@@ -1,10 +1,10 @@
 class Circle {
-    constructor(x, y, duration, growth, color, opacity = 1) {
+    constructor(x, y, duration, color, opacity = 1) {
       this.x = x;
       this.y = y;
       this.color = color;
   
-      this.growthVelocity = growth || 50; // pixels / sec
+      this.growthVelocity = 50; // pixels / sec
       this.minVelocity = 50; // if gain is < 0.25 => constant growth
       this.friction = -50; // pixels / sec
   
@@ -28,10 +28,9 @@ class Circle {
   
         context.save();
         context.beginPath();
-        context.fillStyle = this.color;
+        context.strokeStyle = this.color;
         context.globalAlpha = this.opacityScale * this.lifeTime;
         context.arc(x, y, Math.round(this.radius), 0, Math.PI * 2, false);
-        context.fill();
         context.closePath();
         context.restore();
       }
