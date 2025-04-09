@@ -18,7 +18,6 @@ let circles = [];
 let circleColor = "red";
 let circleDuration = 2000;
 
-let time = 0;
 let timeLastTouch = null;
 let touchCooldown = 100;
 let lastFrameTime = 0;
@@ -90,9 +89,9 @@ function onClick() {
 //touching phone (from drips) to get azimuth, distance, elevation from touched coordinates
 function onTouchStart(e) {
 
-  time = performance.now();
+  const time = performance.now();
   if (touchId === null) {
-    if (time - timeLastTouch >= touchCooldown) {
+    if (time - timeLastTouch >= touchCooldown) { //only execute after cooldown
       const touch = e.touches[0];
       const id = touch.identifier;
       const y = touch.pageY;
@@ -104,8 +103,6 @@ function onTouchStart(e) {
 
       touchStartTime = 0.001 * performance.now();
 
-      const newCircle = new Circle(x, y, circleDuration, circleColor);
-      circles.push(newCircle);
     }
   }
 }
@@ -139,6 +136,10 @@ function onTouchEnd(e) {
       touchId = null;
 
       timeLastTouch = performance.now();
+
+      //generate visual feedback
+      const newCircle = new Circle(x, y, circleDuration, circleColor);
+      circles.push(newCircle);
     }
   }
 }
@@ -270,6 +271,7 @@ function onAnimationFrame() {
 
   messageElem.innerHTML = `${Math.round(azimuth)} | ${Math.round(elevation)} | ${distance.toFixed(2)}`;
 
+  //render all circles in circles array
   dt = performance.now() - lastFrameTime;
   for (circle of circles) {
     circle.render(dt, window.width, window.height); //dt?
