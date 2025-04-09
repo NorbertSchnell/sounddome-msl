@@ -134,3 +134,31 @@ body {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
   cursor: pointer;
 }
+
+/* LANDSCAPE PROTECTION */
+@media screen and (orientation: landscape) {
+  body::before {
+      content: "Bitte drehe dein Gerät zurück ins Hochformat.";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.9);
+      color: white;
+      font-size: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+      text-align: center;
+      padding: 20px;
+  }
+
+  #canvas,
+  #compass,
+  #distance-slider,
+  #message-display {
+      display: none !important;
+  }
+}
