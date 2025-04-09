@@ -135,7 +135,7 @@ body {
   cursor: pointer;
 }
 
-/* LANDSCAPE PROTECTION */
+/* LANDSCAPE PROTECTION
 @media screen and (orientation: landscape) {
   body::before {
       content: "Bitte drehe dein Gerät zurück ins Hochformat.";
@@ -161,6 +161,6 @@ body {
   #message-display {
       display: none !important;
   }
-}
+} */
 
 
