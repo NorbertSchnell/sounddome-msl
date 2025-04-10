@@ -54,16 +54,19 @@ webSocketServer.on('connection', (socket, req) => {
           const azimuth = incoming[2];
           const distance = incoming[3];
           const elevation = incoming[4];
+
+          // console.log('orientation', clientId, azimuth, distance, elevation);
           oscClient.send('orientation', clientId, azimuth, distance, elevation);
           break;
         }
 
         case 'sound': {
           const clientId = incoming[1];
-          const randomSound = Math.floor(Math.random() * 3);
+          const x = incoming[2];
+          const y = incoming[3];
 
           // playerId is paired with random number between 0 and 2, allowing for unique numbers for different sounds
-          oscClient.send('sound', clientId, randomSound);
+          oscClient.send('sound', clientId, x, y);
           break;
         }
       }
