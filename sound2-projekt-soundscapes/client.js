@@ -21,7 +21,7 @@ let circleColor = "red";
 let circleDuration = 2000;
 
 let timeLastTouch = null;
-let touchCooldown = 100;
+let touchCooldown = 0.1;
 let lastFrameTime = 0;
 
 /* Event listeners */
