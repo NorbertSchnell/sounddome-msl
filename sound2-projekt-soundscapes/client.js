@@ -253,7 +253,7 @@ function onAnimationFrame() {
     messageElem.innerHTML = `${Math.round(azimuth)} | ${Math.round(elevation)} | ${distance.toFixed(2)}`;
 
     // Render circles
-    const dt = 0.01 * (performance.now() - lastFrameTime);
+    const dt = 0.001 * (performance.now() - lastFrameTime);
     for (let circle of circles) {
         circle.render(dt, width, height, context);
     }
