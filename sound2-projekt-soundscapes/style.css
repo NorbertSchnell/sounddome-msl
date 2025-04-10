@@ -1,37 +1,41 @@
-/* Reset und Basis-Styles */
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
-html,
-body {
-  width: 100%;
+html {
   height: 100%;
   overflow: hidden;
-  touch-action: manipulation;
+  height: -webkit-fill-available;
+  /* Für Mobile Browser */
 }
 
 body {
+  width: 100%;
+  min-height: 100vh;
+  min-height: -webkit-fill-available;
+  /* Wichtig für Safari */
+  overflow: hidden;
+  touch-action: manipulation;
   background-color: black;
   color: white;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   text-align: center;
   position: fixed;
-  width: 100%;
-  height: 100%;
   margin: 0;
-  padding: 0;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  /* Safe Areas */
   overscroll-behavior: none;
   -webkit-text-size-adjust: none;
   text-size-adjust: none;
 }
 
-/* Message Display */
+/* Message Display mit Safe Area */
 #message-display {
   position: fixed;
-  top: 15px;
+  top: calc(15px + env(safe-area-inset-top, 0px));
+  /* Abstand zum Notch */
   left: 50%;
   transform: translateX(-50%);
   color: white;
@@ -51,7 +55,7 @@ body {
   color: #ff4444;
 }
 
-/* Canvas */
+/* Canvas (bleibt unverändert) */
 #canvas {
   display: block;
   position: fixed;
@@ -63,25 +67,29 @@ body {
   touch-action: none;
 }
 
-/* Client Index */
+/* Client Index (zentriert mit Safe Area) */
 #client-index {
   position: fixed;
-  bottom: 15px;
-  right: 15px;
-  font-size: 16px;
+  top: calc(50% + env(safe-area-inset-top, 0px));
+  /* Zentriert trotz Notch */
+  left: 50%;
+  transform: translate(-50%, -50%);
   z-index: 100;
+  font-size: 16px;
   background-color: rgba(0, 0, 0, 0.5);
   padding: 6px 12px;
   border-radius: 15px;
 }
 
-/* Kompass */
+/* Kompass mit Safe Areas */
 #compass {
   position: fixed;
-  top: 0;
+  top: env(safe-area-inset-top, 0px);
+  /* Start unter dem Notch */
   left: 0;
   width: 100vw;
-  height: 100vh;
+  height: calc(100vh - env(safe-area-inset-bottom, 0px));
+  /* Stopp vor Browserleiste */
   pointer-events: none;
   opacity: 0;
   transition: opacity 0.5s ease-in-out;
@@ -99,25 +107,29 @@ body {
 }
 
 #north {
-  top: 25px;
+  top: calc(50px + env(safe-area-inset-top, 0px));
+  /* Abstand zum Notch */
   left: 50%;
   transform: translateX(-50%);
 }
 
 #south {
-  bottom: 15px;
+  bottom: calc(15px + env(safe-area-inset-bottom, 0px));
+  /* Abstand zur Browserleiste */
   left: 50%;
   transform: translateX(-50%);
 }
 
 #west {
-  left: 15px;
+  left: calc(15px + env(safe-area-inset-left, 0px));
+  /* Linker Abstand */
   top: 50%;
   transform: translateY(-50%);
 }
 
 #east {
-  right: 15px;
+  right: calc(15px + env(safe-area-inset-right, 0px));
+  /* Rechter Abstand */
   top: 50%;
   transform: translateY(-50%);
 }
@@ -126,10 +138,11 @@ body {
   opacity: 1 !important;
 }
 
-/* Distance Slider */
+/* Distance Slider mit Safe Area */
 #distance-slider {
   position: fixed;
-  bottom: 80px;
+  bottom: calc(80px + env(safe-area-inset-bottom, 0px));
+  /* Über der Browserleiste */
   left: 50%;
   transform: translateX(-50%);
   width: 80%;

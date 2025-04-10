@@ -1,4 +1,6 @@
-//global variables
+import { Circle, size } from './Circle.js';
+
+// Global variables
 const messageElem = document.getElementById('message-display');
 const indexElem = document.getElementById('client-index');
 const canvas = document.getElementById('canvas');
@@ -22,8 +24,7 @@ let timeLastTouch = null;
 let touchCooldown = 100;
 let lastFrameTime = 0;
 
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-event listeners*/
+/* Event listeners */
 messageElem.innerText = 'touch screen to start';
 document.body.addEventListener('click', onClick);
 
@@ -32,298 +33,271 @@ document.body.addEventListener('touchmove', onTouchMove);
 document.body.addEventListener('touchend', onTouchEnd);
 document.body.addEventListener('touchcancel', onTouchEnd);
 
-window.addEventListener('resize', updateCanvasSize);
+window.addEventListener('resize', handleResize);
+window.addEventListener('orientationchange', handleOrientationChange);
 
-function updateCanvasSize() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
+function handleResize() {
+    updateCanvasSize();
+    requestAnimationFrame(onAnimationFrame);
 }
 
-// touching the phone
+function handleOrientationChange() {
+    setTimeout(() => {
+        updateCanvasSize();
+        requestAnimationFrame(onAnimationFrame);
+    }, 100);
+}
+
+function updateCanvasSize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    context.clearRect(0, 0, canvas.width, canvas.height);
+}
+
+// Touch handling
 let touchId = null;
 let touchStartY = null;
 let startDistance = null;
 let lastClickTime = null;
 
 function onClick() {
-  const time = performance.now();
+    const time = performance.now();
 
-  if (lastClickTime === null) {
-    init();
-  } else if (time - lastClickTime < 200) {
-    refAlpha = null;
-  }
+    if (lastClickTime === null) {
+        init();
+    } else if (time - lastClickTime < 200) {
+        refAlpha = null;
+    }
 
-  lastClickTime = time;
+    lastClickTime = time;
 }
 
-// function onTouchStart(e) { //when user starts to touch the screen
-//   if (touchId === null) {
-//     const touch = e.touches[0];
-//     const id = touch.identifier;
-//     const y = touch.pageY;
-
-//     touchId = id;
-//     touchStartY = y;
-//     startDistance = distance;
-//   }
-// }
-
-// function onTouchMove(e) { //user moves while touching
-//   for (let touch of e.touches) {
-//     if (touch.identifier === touchId) {
-//       const y = touch.pageY;
-//       const dY = touchStartY - y;
-//       const dist = 2 * (maxDistance - minDistance) * dY / canvas.height;
-
-//       distance = Math.max(minDistance, Math.min(maxDistance, startDistance + dist));
-//       break;
-//     }
-//   }
-// }
-
-// function onTouchEnd(e) { 
-//   touchId = null;
-// }
-
-//touching phone (from drips) to get azimuth, distance, elevation from touched coordinates
 function onTouchStart(e) {
+    const time = performance.now();
+    if (touchId === null) {
+        if (time - timeLastTouch >= touchCooldown) {
+            const touch = e.touches[0];
+            const id = touch.identifier;
+            const y = touch.pageY;
+            const x = touch.pageX;
 
-  const time = performance.now();
-  if (touchId === null) {
-    if (time - timeLastTouch >= touchCooldown) { //only execute after cooldown
-      const touch = e.touches[0];
-      const id = touch.identifier;
-      const y = touch.pageY;
-      const x = touch.pageX;
+            touchId = id;
+            touchStartY = y;
+            startDistance = distance;
 
-      touchId = id;
-      touchStartY = y;
-      startDistance = distance;
-
-      touchStartTime = 0.001 * performance.now();
-
+            touchStartTime = 0.001 * performance.now();
+        }
     }
-  }
 }
 
-function onTouchMove(e) { //user moves while touching
-  for (let touch of e.touches) {
-    if (touch.identifier === touchId) {
-      const y = touch.pageY;
-      const dY = touchStartY - y;
-      const dist = 2 * (maxDistance - minDistance) * dY / canvas.height;
+function onTouchMove(e) {
+    for (let touch of e.touches) {
+        if (touch.identifier === touchId) {
+            const y = touch.pageY;
+            const dY = touchStartY - y;
+            const dist = 2 * (maxDistance - minDistance) * dY / canvas.height;
 
-      if (dist > 20) {
-        touchStartTime = null;
-        distance = Math.max(minDistance, Math.min(maxDistance, startDistance + dist - 20));
-      }
-
-      break;
+            if (dist > 20) {
+                touchStartTime = null;
+                distance = Math.max(minDistance, Math.min(maxDistance, startDistance + dist - 20));
+            }
+            break;
+        }
     }
-  }
 }
 
 function onTouchEnd(e) {
-  for (let touch of e.changedTouches) {
-    if (touch.identifier === touchId) {
-      const touchEndTime = 0.001 * performance.now();
+    for (let touch of e.changedTouches) {
+        if (touch.identifier === touchId) {
+            const touchEndTime = 0.001 * performance.now();
 
-      if (touchStartTime !== null && touchEndTime - touchStartTime < 0.15) {
-        sendMessage(['sound', clientId]);
-      }
+            if (touchStartTime !== null && touchEndTime - touchStartTime < 0.15) {
+                sendMessage(['sound', clientId]);
 
-      touchId = null;
+                // Get normalized touch position
+                const x = (touch.pageX - canvas.offsetLeft) / canvas.width * 2 - 1;
+                const y = -(touch.pageY - canvas.offsetTop) / canvas.height * 2 + 1;
 
-      timeLastTouch = performance.now();
+                // Create new circle
+                const newCircle = new Circle(x, y, circleDuration, circleColor);
+                circles.push(newCircle);
+            }
 
-      //generate visual feedback
-      const newCircle = new Circle(x, y, circleDuration, circleColor);
-      circles.push(newCircle);
+            touchId = null;
+            timeLastTouch = performance.now();
+        }
     }
-  }
 }
 
 async function init() {
-  messageElem.innerText = '';
+    messageElem.innerText = '';
 
-  document.getElementById('compass').classList.add('compass-visible');
-  document.getElementById('distance-slider').classList.add('visible');
+    document.getElementById('compass').classList.add('compass-visible');
+    document.getElementById('distance-slider').classList.add('visible');
 
-  updateCanvasSize();
+    updateCanvasSize();
 
-  if (DeviceOrientationEvent) {
-    if (DeviceOrientationEvent.requestPermission) {
-      const permission = await DeviceOrientationEvent.requestPermission();
+    if (DeviceOrientationEvent) {
+        if (DeviceOrientationEvent.requestPermission) {
+            const permission = await DeviceOrientationEvent.requestPermission();
 
-      if (permission == "granted") {
-        start();
-      } else {
-        setErrorMessage("no permission for device orientation");
-      }
+            if (permission == "granted") {
+                start();
+            } else {
+                setErrorMessage("no permission for device orientation");
+            }
+        } else {
+            start();
+        }
     } else {
-      start();// no permission needed on non-iOS devices
+        setErrorMessage("device orientation not available");
     }
-  } else {
-    setErrorMessage("device orientation not available");
-  }
 }
 
-
-
 function start() {
-  window.addEventListener("deviceorientation", onDeviceOrientation);
-  requestAnimationFrame(onAnimationFrame);
+    window.addEventListener("deviceorientation", onDeviceOrientation);
+    requestAnimationFrame(onAnimationFrame);
 }
 
 function setErrorMessage(text) {
-  messageElem.innerText = text;
-  messageElem.classList.add('error');
+    messageElem.innerText = text;
+    messageElem.classList.add('error');
 }
 
 function onDeviceOrientation(e) {
-  if (refAlpha === null) {
-    refAlpha = e.alpha;
-  }
+    if (refAlpha === null) {
+        refAlpha = e.alpha;
+    }
 
-  let alpha = e.alpha - refAlpha;
-  let beta = e.beta;
+    let alpha = e.alpha - refAlpha;
+    let beta = e.beta;
 
-  if (beta > 90) {
-    azimuth = alpha - 180;
-    elevation = 180 - beta;
-  } else if (beta < -90) {
-    azimuth = alpha - 180;
-    elevation = -beta - 180;
-  } else {
-    azimuth = alpha;
-    elevation = beta;
-  }
+    if (beta > 90) {
+        azimuth = alpha - 180;
+        elevation = 180 - beta;
+    } else if (beta < -90) {
+        azimuth = alpha - 180;
+        elevation = -beta - 180;
+    } else {
+        azimuth = alpha;
+        elevation = beta;
+    }
 
-  if (azimuth < -180) {
-    azimuth += 360;
-  } else if (azimuth >= 180) {
-    azimuth -= 360;
-  }
+    if (azimuth < -180) {
+        azimuth += 360;
+    } else if (azimuth >= 180) {
+        azimuth -= 360;
+    }
 
-  const distance = document.getElementById('distance-slider').value;//get slider value for distance
+    const distance = document.getElementById('distance-slider').value;
 
-  // paint stroke with normalized start and end coordinates and color
-  const outgoing = ['orientation', clientId, -azimuth, 40, elevation];
+    const outgoing = ['orientation', clientId, -azimuth, 40, elevation];
 
-  if (clientId !== null) {
-    const str = JSON.stringify(outgoing);
-    socket.send(str);
-  }
+    if (clientId !== null) {
+        const str = JSON.stringify(outgoing);
+        socket.send(str);
+    }
 }
 
 const minCircleSize = 20;
 const maxCircleSize = 120;
 
 function onAnimationFrame() {
+    const width = canvas.width;
+    const height = canvas.height;
+    const maxRadius = Math.min(width, height) / 2.7;
+    const normDist = (distance - minDistance) / (maxDistance - minDistance);
+    const circleSize = maxCircleSize - (maxCircleSize - minCircleSize) * normDist;
 
-  const width = canvas.width;
-  const height = canvas.height;
-  const maxRadius = Math.min(width, height) / 2.7;
-  const normDist = (distance - minDistance) / (maxDistance - minDistance);
-  const circleSize = maxCircleSize - (maxCircleSize - minCircleSize) * normDist;
+    context.clearRect(0, 0, width, height);
 
-  context.clearRect(0, 0, width, height);
+    const displayAzimuth = Math.PI * -azimuth / 180 + 0.5 * Math.PI;
+    const displayElevation = Math.PI * elevation / 180;
+    const radius = Math.abs(maxRadius * Math.cos(displayElevation));
+    const x = radius * Math.cos(displayAzimuth);
+    const y = radius * Math.sin(displayAzimuth);
 
-  const displayAzimuth = Math.PI * -azimuth / 180 + 0.5 * Math.PI;
-  const displayElevation = Math.PI * elevation / 180;
-  const radius = Math.abs(maxRadius * Math.cos(displayElevation));
-  const x = radius * Math.cos(displayAzimuth);
-  const y = radius * Math.sin(displayAzimuth);
+    const centerX = 0.5 * width - x;
+    const centerY = 0.5 * height - y;
+    const innerCircleRadius = Math.max(0, Math.abs(radius - 0.5 * circleSize));
+    const outerCircleRadius = Math.max(0, Math.abs(radius + 0.5 * circleSize));
+    const midCircleRadius = Math.max(0, radius);
 
-  const centerX = 0.5 * width - x;
-  const centerY = 0.5 * height - y;
-  const innerCircleRadius = Math.max(0, Math.abs(radius - 0.5 * circleSize));
-  const outerCircleRadius = Math.max(0, Math.abs(radius + 0.5 * circleSize));
-  const midCircleRadius = Math.max(0, radius);
+    if (elevation >= 0) {
+        context.fillStyle = '#0ff';
+        context.strokeStyle = '#0ff';
+    } else {
+        context.fillStyle = '#f0f';
+        context.strokeStyle = '#f0f';
+    }
 
-  if (elevation >= 0) {
-    context.fillStyle = '#0ff';
-    context.strokeStyle = '#0ff';
-  } else {
-    context.fillStyle = '#f0f';
-    context.strokeStyle = '#f0f';
-  }
+    context.globalAlpha = 1;
+    context.lineWidth = 0.5;
+    context.beginPath();
+    context.arc(0.5 * width, 0.5 * height, innerCircleRadius, 0, 2 * Math.PI);
+    context.moveTo(0.5 * width + outerCircleRadius, 0.5 * height);
+    context.arc(0.5 * width, 0.5 * height, outerCircleRadius, 0, 2 * Math.PI);
+    context.stroke();
 
-  context.globalAlpha = 1;
-  context.lineWidth = 0.5;
-  context.beginPath();
-  context.arc(0.5 * width, 0.5 * height, innerCircleRadius, 0, 2 * Math.PI);
-  context.moveTo(0.5 * width + outerCircleRadius, 0.5 * height);
-  context.arc(0.5 * width, 0.5 * height, outerCircleRadius, 0, 2 * Math.PI);
-  context.stroke();
+    context.globalAlpha = 0.2;
+    context.lineWidth = circleSize;
+    context.beginPath();
+    context.arc(0.5 * width, 0.5 * height, midCircleRadius, 0, 2 * Math.PI);
+    context.stroke();
 
-  context.globalAlpha = 0.2;
-  context.lineWidth = circleSize;
-  context.beginPath();
-  context.arc(0.5 * width, 0.5 * height, midCircleRadius, 0, 2 * Math.PI);
-  context.stroke();
+    context.globalAlpha = 1;
+    context.beginPath();
+    context.arc(centerX, centerY, 0.5 * circleSize, 0, 2 * Math.PI);
+    context.fill();
 
-  context.globalAlpha = 1;
-  context.beginPath();
-  context.arc(centerX, centerY, 0.5 * circleSize, 0, 2 * Math.PI);
-  context.fill();
+    messageElem.innerHTML = `${Math.round(azimuth)} | ${Math.round(elevation)} | ${distance.toFixed(2)}`;
 
-  messageElem.innerHTML = `${Math.round(azimuth)} | ${Math.round(elevation)} | ${distance.toFixed(2)}`;
+    // Render circles
+    const dt = performance.now() - lastFrameTime;
+    for (let circle of circles) {
+        circle.render(dt, width, height, context);
+    }
 
-  //render all circles in circles array
-  const dt = performance.now() - lastFrameTime;
-  for (circle of circles) {
-    circle.render(dt, window.width, window.height); //dt?
-  }
+    // Remove expired circles
+    circles = circles.filter(circle => circle.lifeTime > 0);
 
-  lastFrameTime = performance.now();
-  requestAnimationFrame(onAnimationFrame);
+    lastFrameTime = performance.now();
+    requestAnimationFrame(onAnimationFrame);
 }
 
-/****************************************************************
- * websocket communication
- */
+// WebSocket communication
 const webSocketPort = 3000;
 const webSocketAddr = window.location.hostname;
-
 const socket = new WebSocket(`wss://${webSocketAddr}:${webSocketPort}`);
-// const socket = new WebSocket(`ws://${webSocketAddr}:${webSocketPort}`);
 
-// listen to opening websocket connections
-socket.addEventListener('open', (event) => {
-});
+socket.addEventListener('open', (event) => { });
 
 socket.addEventListener("close", (event) => {
-  clientId = null;
-  //document.body.style.opacity = 0.333;
+    clientId = null;
 });
 
-// listen to messages from server
 socket.addEventListener('message', (event) => {
-  const message = event.data;
+    const message = event.data;
 
-  if (message.length > 0) {
-    const incoming = JSON.parse(message);
-    const selector = incoming[0]; //message carries client id
+    if (message.length > 0) {
+        const incoming = JSON.parse(message);
+        const selector = incoming[0];
 
-    // dispatch incomming messages
-    switch (selector) {
-      case 'client-id':
-        clientId = incoming[1];
-        indexElem.innerHTML = clientId;
-        break;
-
-      default:
-        break;
+        switch (selector) {
+            case 'client-id':
+                clientId = incoming[1];
+                indexElem.innerHTML = clientId;
+                break;
+            default:
+                break;
+        }
     }
-  }
 });
 
 function sendMessage(message) {
-  const str = JSON.stringify(message);
-  socket.send(str);
+    const str = JSON.stringify(message);
+    socket.send(str);
 }
 
-
-
+// Initialize
+updateCanvasSize();
