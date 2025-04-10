@@ -1,18 +1,19 @@
-export const size = 100;
+export const size = 10;
 
 export class Circle {
     constructor(x, y, duration, color, opacity = 1) {
-        this.x = x;
+        this.x = x; // Pixel-Koordinaten
         this.y = y;
         this.color = color;
 
-        this.growthVelocity = 50; // pixels / sec
-        this.minVelocity = 50; // if gain is < 0.25 => constant growth
-        this.friction = -50; // pixels / sec
+        this.growthVelocity = 20; // pixels / sec – langsamere Expansion
+        this.minVelocity = 20;
+        this.friction = -10; // sanftere Verlangsamung
 
-        this.lifeTime = duration;
+        this.lifeTime = duration; // in Sekunden
         this.opacityScale = opacity / this.lifeTime;
-        this.radius = 0;
+
+        this.radius = 5; // Startgröße
     }
 
     render(dt, width, height, context) {
@@ -25,8 +26,8 @@ export class Circle {
         this.radius += this.growthVelocity * dt;
 
         if (this.lifeTime >= 0) {
-            const x = 0.5 * width + 0.25 * this.x * size;
-            const y = 0.5 * height - 0.25 * this.y * size;
+            const x = this.x;
+            const y = this.y;
 
             context.save();
             context.beginPath();

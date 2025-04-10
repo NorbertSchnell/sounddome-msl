@@ -6,6 +6,7 @@ const indexElem = document.getElementById('client-index');
 const canvas = document.getElementById('canvas');
 const context = canvas.getContext('2d');
 
+
 const minDistance = 1;
 const maxDistance = 5;
 
@@ -17,8 +18,8 @@ let refAlpha = null;
 let touchStartTime = null;
 
 let circles = [];
-let circleColor = "red";
-let circleDuration = 2000;
+let circleColor = "#0ff";
+let circleDuration = 2;
 
 let timeLastTouch = null;
 let touchCooldown = 100;
@@ -73,9 +74,11 @@ function onClick() {
 }
 
 function onTouchStart(e) {
+    console.log("Touch started at:", e.touches[0].pageX, e.touches[0].pageY);
     const time = performance.now();
     if (touchId === null) {
         if (time - timeLastTouch >= touchCooldown) {
+            console.log("blob");
             const touch = e.touches[0];
             const id = touch.identifier;
             const y = touch.pageY;
@@ -114,11 +117,8 @@ function onTouchEnd(e) {
             if (touchStartTime !== null && touchEndTime - touchStartTime < 0.15) {
                 sendMessage(['sound', clientId]);
 
-                // Get normalized touch position
-                const x = (touch.pageX - canvas.offsetLeft) / canvas.width * 2 - 1;
-                const y = -(touch.pageY - canvas.offsetTop) / canvas.height * 2 + 1;
-
-                // Create new circle
+                const x = touch.pageX;
+                const y = touch.pageY;
                 const newCircle = new Circle(x, y, circleDuration, circleColor);
                 circles.push(newCircle);
             }
@@ -253,7 +253,7 @@ function onAnimationFrame() {
     messageElem.innerHTML = `${Math.round(azimuth)} | ${Math.round(elevation)} | ${distance.toFixed(2)}`;
 
     // Render circles
-    const dt = performance.now() - lastFrameTime;
+    const dt = 0.01 * (performance.now() - lastFrameTime);
     for (let circle of circles) {
         circle.render(dt, width, height, context);
     }
