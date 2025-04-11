@@ -16,7 +16,7 @@ let elevation = 0;
 let distance = 50;
 let refAlpha = null;
 let touchStartTime = null;
-  
+
 let circles = [];
 let circleColor = "#0ff";
 let circleDuration = 2;
