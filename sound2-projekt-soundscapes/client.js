@@ -93,25 +93,6 @@ function onTouchStart(e) {
     }
 }
 
-function onTouchMove(e) {
-    for (let touch of e.touches) {
-        if (touch.identifier === touchId) {
-            const y = touch.pageY;
-            const dY = touchStartY - y;
-            const dist = 2 * (ma
-            const dY = touchStartY - y;
-            const dist = 2 * (ma
-            const dY = touchStartY - y;
-            const dist = 2 * (maxDistance - minDistance) * dY / canvas.height;
-
-            if (dist > 20) {
-                touchStartTime = null;
-                distance = Math.max(minDistance, Math.min(maxDistance, startDistance + dist - 20));
-            }
-            break;
-        }
-    }
-}
 
 function onTouchEnd(e) {
     for (let touch of e.changedTouches) {
