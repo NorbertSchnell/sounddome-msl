@@ -98,6 +98,10 @@ function onTouchMove(e) {
         if (touch.identifier === touchId) {
             const y = touch.pageY;
             const dY = touchStartY - y;
+            const dist = 2 * (ma
+            const dY = touchStartY - y;
+            const dist = 2 * (ma
+            const dY = touchStartY - y;
             const dist = 2 * (maxDistance - minDistance) * dY / canvas.height;
 
             if (dist > 20) {
