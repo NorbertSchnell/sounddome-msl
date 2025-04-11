@@ -13,7 +13,7 @@ const maxDistance = 5;
 let clientId = null;
 let azimuth = 0;
 let elevation = 0;
-let distance = 3;
+let distance = 50;
 let refAlpha = null;
 let touchStartTime = null;
   
@@ -30,7 +30,6 @@ messageElem.innerText = 'touch screen to start';
 document.body.addEventListener('click', onClick);
 
 document.body.addEventListener('touchstart', onTouchStart);
-document.body.addEventListener('touchmove', onTouchMove);
 document.body.addEventListener('touchend', onTouchEnd);
 document.body.addEventListener('touchcancel', onTouchEnd);
 
@@ -58,7 +57,6 @@ function updateCanvasSize() {
 // Touch handling
 let touchId = null;
 let touchStartY = null;
-let startDistance = null;
 let lastClickTime = null;
 
 function onClick() {
@@ -74,37 +72,19 @@ function onClick() {
 }
 
 function onTouchStart(e) {
-    console.log("Touch started at:", e.touches[0].pageX, e.touches[0].pageY);
+    // console.log("Touch started at:", e.touches[0].pageX, e.touches[0].pageY);
+
     const time = performance.now();
     if (touchId === null) {
         if (time - timeLastTouch >= touchCooldown) {
-            console.log("blob");
             const touch = e.touches[0];
             const id = touch.identifier;
             const y = touch.pageY;
-            const x = touch.pageX;
 
             touchId = id;
             touchStartY = y;
-            startDistance = distance;
 
             touchStartTime = 0.001 * performance.now();
-        }
-    }
-}
-
-function onTouchMove(e) {
-    for (let touch of e.touches) {
-        if (touch.identifier === touchId) {
-            const y = touch.pageY;
-            const dY = touchStartY - y;
-            const dist = 2 * (maxDistance - minDistance) * dY / canvas.height;
-
-            if (dist > 20) {
-                touchStartTime = null;
-                distance = Math.max(minDistance, Math.min(maxDistance, startDistance + dist - 20));
-            }
-            break;
         }
     }
 }
@@ -114,11 +94,14 @@ function onTouchEnd(e) {
         if (touch.identifier === touchId) {
             const touchEndTime = 0.001 * performance.now();
 
-            if (touchStartTime !== null && touchEndTime - touchStartTime < 0.15) {
-                sendMessage(['sound', clientId]);
-
+            if (touchStartTime !== null && touchEndTime - touchStartTime < 0.15 && lastClickTime !== null) {
                 const x = touch.pageX;
                 const y = touch.pageY;
+                const normX = x / canvas.width;
+                const normY = y / canvas.height;
+
+                sendMessage(['sound', clientId, normX, normY]);
+
                 const newCircle = new Circle(x, y, circleDuration, circleColor);
                 circles.push(newCircle);
             }
@@ -164,6 +147,14 @@ function setErrorMessage(text) {
     messageElem.classList.add('error');
 }
 
+const sliderElem = document.getElementById('distance-slider');
+
+
+sliderElem.addEventListener("input", (event) => {
+  const value = parseInt(event.target.value);
+  distance = value;
+});
+
 function onDeviceOrientation(e) {
     if (refAlpha === null) {
         refAlpha = e.alpha;
@@ -189,9 +180,8 @@ function onDeviceOrientation(e) {
         azimuth -= 360;
     }
 
-    const distance = document.getElementById('distance-slider').value;
-
-    const outgoing = ['orientation', clientId, -azimuth, 40, elevation];
+    //console.log('orientation', clientId, -azimuth, 40, elevation)
+    const outgoing = ['orientation', clientId, -azimuth, distance, elevation];
 
     if (clientId !== null) {
         const str = JSON.stringify(outgoing);
@@ -200,13 +190,13 @@ function onDeviceOrientation(e) {
 }
 
 const minCircleSize = 20;
-const maxCircleSize = 120;
+const maxCircleSize = 60;
 
 function onAnimationFrame() {
     const width = canvas.width;
     const height = canvas.height;
     const maxRadius = Math.min(width, height) / 2.7;
-    const normDist = (distance - minDistance) / (maxDistance - minDistance);
+    const normDist = (distance - 35) / 65;
     const circleSize = maxCircleSize - (maxCircleSize - minCircleSize) * normDist;
 
     context.clearRect(0, 0, width, height);
@@ -253,7 +243,7 @@ function onAnimationFrame() {
     messageElem.innerHTML = `${Math.round(azimuth)} | ${Math.round(elevation)} | ${distance.toFixed(2)}`;
 
     // Render circles
-    const dt = 0.01 * (performance.now() - lastFrameTime);
+    const dt = 0.001 * (performance.now() - lastFrameTime);
     for (let circle of circles) {
         circle.render(dt, width, height, context);
     }
