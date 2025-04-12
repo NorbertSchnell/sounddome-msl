@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 70.0, 100.0, 434.0, 802.0 ],
+		"rect" : [ 34.0, 100.0, 437.0, 808.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 1,
 		"default_fontsize" : 12.0,
@@ -325,7 +325,7 @@
 					"patching_rect" : [ 467.0, 204.0, 40.0, 24.0 ],
 					"presentation" : 1,
 					"presentation_rect" : [ 361.0, 371.0, 37.0, 24.0 ],
-					"text" : "-27",
+					"text" : "0",
 					"textcolor" : [ 0.847058823529412, 0.847058823529412, 0.847058823529412, 1.0 ],
 					"textjustification" : 2
 				}
@@ -662,7 +662,7 @@
 									"numinlets" : 1,
 									"numoutlets" : 2,
 									"outlettype" : [ "multichannelsignal", "" ],
-									"patching_rect" : [ 50.0, 366.0, 155.0, 35.0 ],
+									"patching_rect" : [ 50.0, 366.0, 158.0, 35.0 ],
 									"saved_object_attributes" : 									{
 										"parameter_enable" : 0
 									}
@@ -792,7 +792,7 @@
 									"numinlets" : 1,
 									"numoutlets" : 2,
 									"outlettype" : [ "multichannelsignal", "" ],
-									"patching_rect" : [ 50.0, 223.0, 190.0, 62.0 ],
+									"patching_rect" : [ 50.0, 223.0, 193.0, 62.0 ],
 									"saved_object_attributes" : 									{
 										"parameter_enable" : 0
 									}
@@ -809,7 +809,7 @@
 									"numoutlets" : 2,
 									"outlettype" : [ "multichannelsignal", "multichannelsignal" ],
 									"patching_rect" : [ 50.0, 140.0, 293.0, 22.0 ],
-									"text" : "mc.gate~ 2"
+									"text" : "mc.gate~ 2 1"
 								}
 
 							}
@@ -1593,7 +1593,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 330.0, 226.0, 272.0, 62.0 ],
-									"presentation_linecount" : 4,
 									"text" : "/dimension 2, /display/zoom 150, /dsp/bypass 1, /beam/1/color 0.988 0.718 0.024 1., /grid/visible 1, /grid/angulardivisions/visible 0, /legend/visible 0"
 								}
 
