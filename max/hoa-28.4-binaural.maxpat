@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 164.0, 100.0, 687.0, 823.0 ],
+		"rect" : [ 164.0, 100.0, 829.0, 848.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -89,7 +89,7 @@
 						"parameter_enable" : 0
 					}
 ,
-					"text" : "spat5.spat~ @inputs 1 @internals 8 @outputs 16 @initwith \"/panning/type hoa3d, /decoding/type passthrough\" @mc 1"
+					"text" : "spat5.spat~ @inputs 1 @internals 8 @outputs 25 @initwith \"/panning/type hoa3d, /decoding/type passthrough\" @mc 1"
 				}
 
 			}
@@ -1057,7 +1057,7 @@
 , 			{
 				"box" : 				{
 					"id" : "obj-3",
-					"lastchannelcount" : 16,
+					"lastchannelcount" : 25,
 					"maxclass" : "mc.live.gain~",
 					"numinlets" : 1,
 					"numoutlets" : 4,
