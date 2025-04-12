@@ -13,4 +13,3 @@ This repository contains documentation and software for the sound dome at the Me
 - [ ] define final positions and cabling for subwoofers
 - [ ] perfect cabling of all loudspeakers
 - [ ] exchange the (smallest) stand of loudspeaker 5.4
-- [ ] select 3D audio works for demonstration and events
