@@ -1,0 +1,262 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  height: 100%;
+  overflow: hidden;
+  height: -webkit-fill-available;
+  /* Für Mobile Browser */
+}
+
+body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  touch-action: manipulation;
+  background-color: black;
+  color: white;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  text-align: center;
+  position: fixed;
+  margin: 0;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  /* Safe Areas */
+  overscroll-behavior: none;
+  -webkit-text-size-adjust: none;
+  text-size-adjust: none;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
+}
+
+/* Message Display mit Safe Area */
+#message-display {
+  position: fixed;
+  top: calc(15px + env(safe-area-inset-top, 0px));
+  /* Abstand zum Notch */
+  left: 50%;
+  transform: translateX(-50%);
+  color: white;
+  font-size: 16px;
+  opacity: 0.8;
+  z-index: 200;
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 8px 16px;
+  border-radius: 20px;
+  max-width: 90%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#message-display.error {
+  color: #ff4444;
+}
+
+/* Canvas (aktualisiert) */
+#canvas {
+  display: block;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  touch-action: none;
+}
+
+/* Client Index (zentriert mit Safe Area) */
+#client-index {
+  position: fixed;
+  top: calc(50% + env(safe-area-inset-top, 0px));
+  /* Zentriert trotz Notch */
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 100;
+  font-size: 16px;
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 6px 12px;
+  border-radius: 15px;
+}
+
+/* Kompass mit Safe Areas (aktualisiert) */
+#compass {
+  position: fixed;
+  top: env(safe-area-inset-top, 0px);
+  /* Start unter dem Notch */
+  left: 0;
+  width: 100%;
+  height: 100%;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  /* Stopp vor Browserleiste */
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out;
+  z-index: 50;
+}
+
+.compass-letter {
+  position: absolute;
+  color: white;
+  font-size: 22px;
+  font-weight: bold;
+  opacity: 0.7;
+  text-shadow: 0 0 5px rgba(0, 0, 0, 0.8);
+  z-index: 51;
+}
+
+#north {
+  top: calc(50px + env(safe-area-inset-top, 0px));
+  /* Abstand zum Notch */
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+#south {
+  bottom: calc(30px + env(safe-area-inset-bottom, 0px));
+  /* Mehr Abstand zur Browserleiste */
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+#west {
+  left: calc(15px + env(safe-area-inset-left, 0px));
+  /* Linker Abstand */
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+#east {
+  right: calc(15px + env(safe-area-inset-right, 0px));
+  /* Rechter Abstand */
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.compass-visible {
+  opacity: 1 !important;
+}
+
+/* Distance Slider mit Safe Area */
+#distance-slider {
+  position: fixed;
+  bottom: calc(80px + env(safe-area-inset-bottom, 0px));
+  /* Über der Browserleiste */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80%;
+  height: 30px;
+  z-index: 150;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.5s ease-in-out, visibility 0s 0.5s;
+}
+
+#distance-slider.visible {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.5s ease-in-out, visibility 0s;
+}
+
+#distance-slider input[type="range"] {
+  width: 100%;
+  height: 30px;
+  appearance: none;
+  background: linear-gradient(to right, white, white);
+  border-radius: 15px;
+  outline: none;
+  margin: 0;
+}
+
+#distance-slider input[type="range"]::-webkit-slider-thumb {
+  appearance: none;
+  width: 30px;
+  height: 30px;
+  background: black;
+  border-radius: 50%;
+  border: 3px solid white;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+  cursor: pointer;
+}
+
+#distance-slider input[type="range"]::-moz-range-thumb {
+  width: 30px;
+  height: 30px;
+  background: black;
+  border-radius: 50%;
+  border: 3px solid white;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+  cursor: pointer;
+}
+
+/* Landscape Protection */
+@media screen and (orientation: landscape) {
+  body::before {
+      content: "Bitte drehe dein Gerät zurück ins Hochformat.";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.95);
+      color: white;
+      font-size: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+      text-align: center;
+      padding: 20px;
+      line-height: 1.4;
+  }
+
+  #canvas,
+  #compass,
+  #distance-slider,
+  #message-display,
+  #client-index {
+      display: none !important;
+  }
+}
+
+/* Anpassungen für sehr kleine Displays */
+@media screen and (max-height: 600px) {
+  .compass-letter {
+      font-size: 18px;
+  }
+
+  #north {
+      top: 15px;
+  }
+
+  #south {
+      bottom: 20px;
+  }
+
+  #west {
+      left: 10px;
+  }
+
+  #east {
+      right: 10px;
+  }
+
+  #message-display {
+      font-size: 14px;
+      top: 10px;
+  }
+}
+
+/* Sicherstellen, dass der Slider auf iOS gut aussieht */
+@supports (-webkit-touch-callout: none) {
+  #distance-slider input[type="range"] {
+      height: 28px;
+  }
+
+  #distance-slider input[type="range"]::-webkit-slider-thumb {
+      width: 28px;
+      height: 28px;
+  }
+}

@@ -1,10 +1,12 @@
 const messageElem = document.getElementById('message-display');
+const indexElem = document.getElementById('client-index');
 const canvas = document.getElementById('canvas');
 const context = canvas.getContext('2d');
 
 const minDistance = 1;
 const maxDistance = 5;
 
+let clientId = null;
 let azimuth = 0;
 let elevation = 0;
 let distance = 3;
@@ -129,11 +131,12 @@ function onDeviceOrientation(e) {
   }
 
   // paint stroke with normalized start and end coordinates and color
-  const outgoing = ['orientation', -azimuth, elevation, distance];
+  const outgoing = ['orientation', clientId, -azimuth, elevation, distance];
 
-  // send paint stroke to server
-  const str = JSON.stringify(outgoing);
-  socket.send(str);
+  if (clientId !== null) {
+    const str = JSON.stringify(outgoing);
+    socket.send(str);
+  }
 }
 
 const minCircleSize = 20;
@@ -196,7 +199,6 @@ function onAnimationFrame() {
  * websocket communication
  */
 const webSocketPort = 3000;
-// const webSocketAddr = '192.168.31.72';
 const webSocketAddr = window.location.hostname;
 
 const socket = new WebSocket(`wss://${webSocketAddr}:${webSocketPort}`);
@@ -206,16 +208,24 @@ const socket = new WebSocket(`wss://${webSocketAddr}:${webSocketPort}`);
 socket.addEventListener('open', (event) => {
 });
 
+socket.addEventListener("close", (event) => {
+  clientId = null;
+  document.body.style.opacity = 0.333;
+});
+
 // listen to messages from server
 socket.addEventListener('message', (event) => {
   const message = event.data;
 
   if (message.length > 0) {
     const incoming = JSON.parse(message);
+    const selector = incoming[0];
 
     // dispatch incomming messages
-    switch (incoming.selector) {
-      case 'xxx':
+    switch (selector) {
+      case 'client-id':
+        clientId = incoming[1];
+        indexElem.innerHTML = clientId;
         break;
 
       default:
@@ -223,4 +233,3 @@ socket.addEventListener('message', (event) => {
     }
   }
 });
-
