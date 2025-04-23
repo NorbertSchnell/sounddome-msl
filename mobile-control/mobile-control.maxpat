@@ -114,7 +114,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 2,
 					"outlettype" : [ "", "" ],
-					"patching_rect" : [ 20.0, 56.0, 120.0, 35.0 ],
+					"patching_rect" : [ 20.0, 56.0, 120.0, 36.0 ],
 					"saved_object_attributes" : 					{
 						"autostart" : 1,
 						"defer" : 0,
@@ -184,7 +184,7 @@
 			}
 , 			{
 				"name" : "server.js",
-				"bootpath" : "~/University/Projekte/Klangdom-MSL/sounddome-msl/mobile-control",
+				"bootpath" : "~/Desktop/sound dome/sounddome-msl/mobile-control",
 				"patcherrelativepath" : ".",
 				"type" : "TEXT",
 				"implicit" : 1
