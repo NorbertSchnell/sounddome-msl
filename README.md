@@ -24,8 +24,8 @@ This repository contains documentation and software for the sound dome at the Me
 ### Software
 
 1. Open Dante Virtual SoundCard
-2. <i>Soundcard Einstellungen</i>
+2. Soundcard Settings: ASIO, 32x32
 3. Open Dante Virtual Controller
 4. Load the [MSL speaker setup] (./setup/config-dante-controller-pc-msl.xml) from this repository into the Dante Controller
-5. Open MAX
+5. Open MAX and amke sure that the Dante Soundcard is selected a the driver in the audio status (found in settings)
 6. Load your Maxpatch (You can also use the maxpatches in ./max in this repository)
