@@ -10,6 +10,22 @@ This repository contains documentation and software for the sound dome at the Me
 ## TODO
 
 - [ ] label loudspeakers (ID), clamps ("Klangdom" + ID), the 5 stands ("Klangdom" + ID), cables ("Klangdom" + ID)
-- [ ] define final positions and cabling for subwoofers
-- [ ] perfect cabling of all loudspeakers
-- [ ] exchange the (smallest) stand of loudspeaker 5.4
+- [x] define final positions and cabling for subwoofers
+- [x] perfect cabling of all loudspeakers
+- [x] exchange the (smallest) stand of loudspeaker 5.4
+
+## Quick Start - Loading A MaxPatch
+
+### Hardware:
+
+1. Turn on the 2 interfaces connected to the speaker network
+2. Turn on the PC (you can connect your own PC to the LAN network)
+
+### Software
+
+1. Open Dante Virtual SoundCard
+2. Soundcard Settings: ASIO, 32x32
+3. Open Dante Virtual Controller
+4. Load the [MSL speaker setup] (./setup/config-dante-controller-pc-msl.xml) from this repository into the Dante Controller
+5. Open MAX and amke sure that the Dante Soundcard is selected a the driver in the audio status (found in settings)
+6. Load your Maxpatch (You can also use the maxpatches in ./max in this repository)

@@ -218,7 +218,7 @@
 			}
 , 			{
 				"name" : "server.js",
-				"bootpath" : "~/University/Projekte/Klangdom-MSL/sounddome-msl/mobile-control",
+				"bootpath" : "~/Desktop/sound dome/sounddome-msl/mobile-control",
 				"patcherrelativepath" : ".",
 				"type" : "TEXT",
 				"implicit" : 1
